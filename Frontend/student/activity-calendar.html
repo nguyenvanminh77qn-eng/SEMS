@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lịch hoạt động - Cổng thông tin sinh viên Đại học Quy Nhơn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-nav="calendar">
+  <div id="siteHeaderSlot"></div>
+
+  <main class="container">
+    <nav class="crumbs" aria-label="Đường dẫn">
+      <a class="back" href="#" data-back>&lsaquo; Quay lại</a>
+      <span class="sep">/</span><a href="home.html">Trang chủ</a>
+      <span class="sep">/</span><span aria-current="page">Lịch hoạt động</span>
+    </nav>
+
+    <div class="page-head">
+      <h1 class="page-title">Lịch hoạt động</h1>
+    </div>
+
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Chế độ xem" id="viewSeg">
+        <button class="chip" type="button" data-view="month" aria-pressed="true">Tháng</button>
+        <button class="chip" type="button" data-view="list" aria-pressed="false">Danh sách</button>
+      </div>
+      <div class="seg" role="group" aria-label="Lọc theo loại hoạt động" id="typeSeg">
+        <button class="chip" type="button" data-type="all" aria-pressed="true">Tất cả</button>
+        <button class="chip" type="button" data-type="van-hoa" aria-pressed="false">Văn hóa</button>
+        <button class="chip" type="button" data-type="the-thao" aria-pressed="false">Thể thao</button>
+        <button class="chip" type="button" data-type="tinh-nguyen" aria-pressed="false">Tình nguyện</button>
+        <button class="chip" type="button" data-type="hoc-thuat" aria-pressed="false">Học thuật</button>
+      </div>
+    </div>
+
+    <section class="card cal" id="monthView" aria-label="Lịch tháng">
+      <div class="cal-head">
+        <button class="icon-btn" id="prevMonth" type="button" aria-label="Tháng trước">&lsaquo;</button>
+        <h2 class="cal-title" id="calTitle" aria-live="polite"></h2>
+        <button class="icon-btn" id="nextMonth" type="button" aria-label="Tháng sau">&rsaquo;</button>
+      </div>
+      <div class="cal-grid" id="calGrid" role="grid"></div>
+      <div class="legend">
+        <span><i class="swatch"></i>Hoạt động chung</span>
+        <span><i class="swatch is-points"></i>Có điểm rèn luyện</span>
+      </div>
+    </section>
+
+    <section class="card day-panel" id="dayPanel" aria-live="polite"></section>
+  </main>
+
+  <script src="js/shared.js"></script>
+  <script src="js/activity-calendar.js"></script>
+</body>
+</html>
