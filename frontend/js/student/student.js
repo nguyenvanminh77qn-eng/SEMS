@@ -265,7 +265,7 @@ window.QN = (function () {
     return (
       '<header class="site-header" id="siteHeader"><div class="container nav-inner">' +
       '<a class="brand" href="notifications.html" aria-label="Đại học Quy Nhơn - Cổng thông tin sinh viên">' +
-      '<img class="brand-mark" src="images/logo.png" width="46" height="46" alt="">' +
+      '<img class="brand-mark" src="../../images/student/logo.png" width="46" height="46" alt="">' +
       '<span><span class="brand-name">Đại học Quy Nhơn</span><span class="brand-sub">Cổng thông tin sinh viên</span></span></a>' +
       '<button class="nav-toggle" id="navToggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mainNav">' + ICON.menu + "</button>" +
       '<nav class="nav" id="mainNav" aria-label="Điều hướng chính">' +
