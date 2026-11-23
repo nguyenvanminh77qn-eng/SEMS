@@ -1,82 +1,83 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Danh sách sự kiện - Cổng thông tin sinh viên Đại học Quy Nhơn</title>
+  <title>Danh sÃ¡ch sá»± kiá»‡n - Cá»•ng thÃ´ng tin sinh viÃªn Äáº¡i há»c Quy NhÆ¡n</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/student/student.css">
-  <link rel="stylesheet" href="../../css/student/event-list.css">
+  <link rel="stylesheet" href="../../css/pages/student/student.css">
+  <link rel="stylesheet" href="../../css/pages/student/event-list.css">
 </head>
 <body data-nav="events">
   <div id="siteHeaderSlot"></div>
 
   <main class="container">
-    <nav class="crumbs" aria-label="Đường dẫn">
-      <a class="back" href="#" data-back>&lsaquo; Quay lại</a>
-      <span class="sep">/</span><a href="home.html">Trang chủ</a>
-      <span class="sep">/</span><span aria-current="page">Sự kiện</span>
+    <nav class="crumbs" aria-label="ÄÆ°á»ng dáº«n">
+      <a class="back" href="#" data-back>&lsaquo; Quay láº¡i</a>
+      <span class="sep">/</span><a href="home.html">Trang chá»§</a>
+      <span class="sep">/</span><span aria-current="page">Sá»± kiá»‡n</span>
     </nav>
 
     <div class="page-head">
-      <h1 class="page-title">Danh sách sự kiện</h1>
+      <h1 class="page-title">Danh sÃ¡ch sá»± kiá»‡n</h1>
     </div>
 
     <form class="search-row" id="searchForm" role="search">
       <div class="search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input class="input" type="search" id="q" placeholder="Tìm theo tên sự kiện" aria-label="Tìm theo tên sự kiện" autocomplete="off">
+        <input class="input" type="search" id="q" placeholder="TÃ¬m theo tÃªn sá»± kiá»‡n" aria-label="TÃ¬m theo tÃªn sá»± kiá»‡n" autocomplete="off">
       </div>
-      <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+      <button class="btn btn-primary" type="submit">TÃ¬m kiáº¿m</button>
     </form>
 
     <div class="layout">
-      <aside class="card filters" aria-label="Bộ lọc">
+      <aside class="card filters" aria-label="Bá»™ lá»c">
         <fieldset class="filter-group" id="fType">
-          <legend>Loại sự kiện</legend>
-          <label class="check"><input type="checkbox" value="van-hoa"> Văn hóa</label>
-          <label class="check"><input type="checkbox" value="the-thao"> Thể thao</label>
-          <label class="check"><input type="checkbox" value="tinh-nguyen"> Tình nguyện</label>
-          <label class="check"><input type="checkbox" value="hoc-thuat"> Học thuật</label>
+          <legend>Loáº¡i sá»± kiá»‡n</legend>
+          <label class="check"><input type="checkbox" value="van-hoa"> VÄƒn hÃ³a</label>
+          <label class="check"><input type="checkbox" value="the-thao"> Thá»ƒ thao</label>
+          <label class="check"><input type="checkbox" value="tinh-nguyen"> TÃ¬nh nguyá»‡n</label>
+          <label class="check"><input type="checkbox" value="hoc-thuat"> Há»c thuáº­t</label>
         </fieldset>
 
         <fieldset class="filter-group" id="fStatus">
-          <legend>Trạng thái</legend>
-          <label class="check"><input type="radio" name="status" value="all" checked> Tất cả</label>
-          <label class="check"><input type="radio" name="status" value="ongoing"> Đang diễn ra</label>
-          <label class="check"><input type="radio" name="status" value="upcoming"> Sắp diễn ra</label>
-          <label class="check"><input type="radio" name="status" value="ended"> Đã kết thúc</label>
+          <legend>Tráº¡ng thÃ¡i</legend>
+          <label class="check"><input type="radio" name="status" value="all" checked> Táº¥t cáº£</label>
+          <label class="check"><input type="radio" name="status" value="ongoing"> Äang diá»…n ra</label>
+          <label class="check"><input type="radio" name="status" value="upcoming"> Sáº¯p diá»…n ra</label>
+          <label class="check"><input type="radio" name="status" value="ended"> ÄÃ£ káº¿t thÃºc</label>
         </fieldset>
 
         <fieldset class="filter-group" id="fOther">
-          <legend>Khác</legend>
-          <label class="check"><input type="checkbox" value="points"> Có điểm rèn luyện</label>
-          <label class="check"><input type="checkbox" value="mine"> Sự kiện tôi đã đăng ký</label>
+          <legend>KhÃ¡c</legend>
+          <label class="check"><input type="checkbox" value="points"> CÃ³ Ä‘iá»ƒm rÃ¨n luyá»‡n</label>
+          <label class="check"><input type="checkbox" value="mine"> Sá»± kiá»‡n tÃ´i Ä‘Ã£ Ä‘Äƒng kÃ½</label>
         </fieldset>
 
         <div class="filter-group">
-          <label class="label" for="sort">Sắp xếp</label>
+          <label class="label" for="sort">Sáº¯p xáº¿p</label>
           <select class="input" id="sort">
-            <option value="nearest">Ngày gần nhất</option>
-            <option value="latest">Ngày xa nhất</option>
-            <option value="name">Tên A-Z</option>
-            <option value="seats">Nhiều chỗ nhất</option>
+            <option value="nearest">NgÃ y gáº§n nháº¥t</option>
+            <option value="latest">NgÃ y xa nháº¥t</option>
+            <option value="name">TÃªn A-Z</option>
+            <option value="seats">Nhiá»u chá»— nháº¥t</option>
           </select>
         </div>
 
-        <button class="btn btn-block" id="clear" type="button">Xóa bộ lọc</button>
+        <button class="btn btn-block" id="clear" type="button">XÃ³a bá»™ lá»c</button>
       </aside>
 
-      <section aria-label="Kết quả">
+      <section aria-label="Káº¿t quáº£">
         <p class="result-count" id="count" aria-live="polite"></p>
         <div class="ev-list" id="evList"></div>
       </section>
     </div>
   </main>
 
-  <script src="../../js/student/student.js"></script>
-  <script src="../../js/student/event-list.js"></script>
+  <script src="../../js/pages/student/student.js"></script>
+  <script src="../../js/pages/student/event-list.js"></script>
 </body>
 </html>
+

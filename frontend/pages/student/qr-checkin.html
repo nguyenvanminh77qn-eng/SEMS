@@ -1,53 +1,53 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mã QR điểm danh - Cổng thông tin sinh viên Đại học Quy Nhơn</title>
+  <title>MÃ£ QR Ä‘iá»ƒm danh - Cá»•ng thÃ´ng tin sinh viÃªn Äáº¡i há»c Quy NhÆ¡n</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/student/student.css">
-  <link rel="stylesheet" href="../../css/student/qr-checkin.css">
+  <link rel="stylesheet" href="../../css/pages/student/student.css">
+  <link rel="stylesheet" href="../../css/pages/student/qr-checkin.css">
 </head>
 <body data-nav="qr">
   <div id="siteHeaderSlot"></div>
 
   <main class="container narrow">
-    <nav class="crumbs" aria-label="Đường dẫn">
-      <a class="back" href="#" data-back>&lsaquo; Quay lại</a>
-      <span class="sep">/</span><a href="home.html">Trang chủ</a>
-      <span class="sep">/</span><span aria-current="page">Mã QR điểm danh</span>
+    <nav class="crumbs" aria-label="ÄÆ°á»ng dáº«n">
+      <a class="back" href="#" data-back>&lsaquo; Quay láº¡i</a>
+      <span class="sep">/</span><a href="home.html">Trang chá»§</a>
+      <span class="sep">/</span><span aria-current="page">MÃ£ QR Ä‘iá»ƒm danh</span>
     </nav>
 
     <div class="page-head">
-      <h1 class="page-title">Mã QR điểm danh</h1>
+      <h1 class="page-title">MÃ£ QR Ä‘iá»ƒm danh</h1>
     </div>
 
     <section class="card panel">
       <div class="row-wrap">
         <div class="field">
-          <label for="eventSelect">Chọn sự kiện đã đăng ký</label>
+          <label for="eventSelect">Chá»n sá»± kiá»‡n Ä‘Ã£ Ä‘Äƒng kÃ½</label>
           <select class="input" id="eventSelect"></select>
         </div>
         <span class="tag status-pill" id="eventStatus"></span>
       </div>
 
-      <ol class="steps" id="steps" aria-label="Các bước điểm danh">
-        <li class="step" data-step="1"><span class="n">1</span>Quét QR sự kiện</li>
-        <li class="step" data-step="2"><span class="n">2</span>Chụp ảnh xác nhận</li>
-        <li class="step" data-step="3"><span class="n">3</span>Hoàn tất điểm danh</li>
+      <ol class="steps" id="steps" aria-label="CÃ¡c bÆ°á»›c Ä‘iá»ƒm danh">
+        <li class="step" data-step="1"><span class="n">1</span>QuÃ©t QR sá»± kiá»‡n</li>
+        <li class="step" data-step="2"><span class="n">2</span>Chá»¥p áº£nh xÃ¡c nháº­n</li>
+        <li class="step" data-step="3"><span class="n">3</span>HoÃ n táº¥t Ä‘iá»ƒm danh</li>
       </ol>
 
       <div class="camera" id="camera">
         <video id="video" playsinline muted></video>
         <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
         <span class="scanline"></span>
-        <p class="hint">Camera điện thoại quét mã QR do ban tổ chức hiển thị</p>
+        <p class="hint">Camera Ä‘iá»‡n thoáº¡i quÃ©t mÃ£ QR do ban tá»• chá»©c hiá»ƒn thá»‹</p>
       </div>
 
       <div class="scan-actions">
-        <button class="btn btn-primary" id="scanBtn" type="button">Bắt đầu quét</button>
+        <button class="btn btn-primary" id="scanBtn" type="button">Báº¯t Ä‘áº§u quÃ©t</button>
       </div>
 
       <div class="alert alert-warn" id="msgWarn" hidden role="status"></div>
@@ -55,61 +55,62 @@
       <div class="alert alert-err" id="msgErr" hidden role="alert"></div>
 
       <p class="help">
-        Lỗi có thể gặp: mã QR hết hạn, sai sự kiện, ngoài thời gian điểm danh, chưa đăng ký hoặc đã điểm danh.
-        Nếu không thể quét hoặc gửi ảnh, hãy liên hệ ban tổ chức để được điểm danh thủ công.
+        Lá»—i cÃ³ thá»ƒ gáº·p: mÃ£ QR háº¿t háº¡n, sai sá»± kiá»‡n, ngoÃ i thá»i gian Ä‘iá»ƒm danh, chÆ°a Ä‘Äƒng kÃ½ hoáº·c Ä‘Ã£ Ä‘iá»ƒm danh.
+        Náº¿u khÃ´ng thá»ƒ quÃ©t hoáº·c gá»­i áº£nh, hÃ£y liÃªn há»‡ ban tá»• chá»©c Ä‘á»ƒ Ä‘Æ°á»£c Ä‘iá»ƒm danh thá»§ cÃ´ng.
       </p>
 
-      <h2 class="section-title">Trạng thái điểm danh của tôi</h2>
+      <h2 class="section-title">Tráº¡ng thÃ¡i Ä‘iá»ƒm danh cá»§a tÃ´i</h2>
       <dl class="kv" id="statusList"></dl>
 
       <details class="demo">
-        <summary>Thử nghiệm không cần camera</summary>
-        <p>Dành cho lúc xem bản demo: giả lập kết quả quét mã QR để xem từng trạng thái.</p>
+        <summary>Thá»­ nghiá»‡m khÃ´ng cáº§n camera</summary>
+        <p>DÃ nh cho lÃºc xem báº£n demo: giáº£ láº­p káº¿t quáº£ quÃ©t mÃ£ QR Ä‘á»ƒ xem tá»«ng tráº¡ng thÃ¡i.</p>
         <div class="seg">
-          <button class="chip" type="button" data-sim="valid">Mã hợp lệ</button>
-          <button class="chip" type="button" data-sim="expired">Mã hết hạn</button>
-          <button class="chip" type="button" data-sim="other">Sai sự kiện</button>
-          <button class="chip" type="button" data-sim="unreg">Chưa đăng ký</button>
-          <button class="chip" type="button" data-sim="garbage">Không phải mã điểm danh</button>
+          <button class="chip" type="button" data-sim="valid">MÃ£ há»£p lá»‡</button>
+          <button class="chip" type="button" data-sim="expired">MÃ£ háº¿t háº¡n</button>
+          <button class="chip" type="button" data-sim="other">Sai sá»± kiá»‡n</button>
+          <button class="chip" type="button" data-sim="unreg">ChÆ°a Ä‘Äƒng kÃ½</button>
+          <button class="chip" type="button" data-sim="garbage">KhÃ´ng pháº£i mÃ£ Ä‘iá»ƒm danh</button>
         </div>
       </details>
     </section>
   </main>
 
-  <!-- Hộp thoại Xác nhận điểm danh -->
+  <!-- Há»™p thoáº¡i XÃ¡c nháº­n Ä‘iá»ƒm danh -->
   <div class="backdrop" id="backdrop">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button class="icon-btn modal-close" id="modalClose" type="button" aria-label="Đóng">&times;</button>
-      <h2 id="modalTitle">Xác nhận điểm danh</h2>
+      <button class="icon-btn modal-close" id="modalClose" type="button" aria-label="ÄÃ³ng">&times;</button>
+      <h2 id="modalTitle">XÃ¡c nháº­n Ä‘iá»ƒm danh</h2>
 
       <div class="field">
-        <label for="fName">Họ và tên</label>
+        <label for="fName">Há» vÃ  tÃªn</label>
         <input class="input" id="fName" readonly>
       </div>
       <div class="field">
-        <label for="fMssv">Mã số sinh viên</label>
+        <label for="fMssv">MÃ£ sá»‘ sinh viÃªn</label>
         <input class="input" id="fMssv" readonly>
       </div>
       <div class="field">
-        <label for="fEvent">Sự kiện tham gia</label>
+        <label for="fEvent">Sá»± kiá»‡n tham gia</label>
         <select class="input" id="fEvent"></select>
       </div>
       <div class="field">
-        <span class="label" id="uploadLabel">Gửi ảnh minh chứng</span>
+        <span class="label" id="uploadLabel">Gá»­i áº£nh minh chá»©ng</span>
         <label class="upload" id="upload">
           <input type="file" id="fPhoto" accept="image/*" aria-labelledby="uploadLabel">
           <span id="uploadInner">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><br>
-            Gửi từ máy lên<br><small>Ảnh có mặt tại sự kiện (JPG, PNG)</small>
+            Gá»­i tá»« mÃ¡y lÃªn<br><small>áº¢nh cÃ³ máº·t táº¡i sá»± kiá»‡n (JPG, PNG)</small>
           </span>
         </label>
         <div class="field-error" id="photoErr" role="alert"></div>
       </div>
-      <button class="btn btn-primary btn-block" id="confirmBtn" type="button">Xác nhận</button>
+      <button class="btn btn-primary btn-block" id="confirmBtn" type="button">XÃ¡c nháº­n</button>
     </div>
   </div>
 
-  <script src="../../js/student/student.js"></script>
-  <script src="../../js/student/qr-checkin.js"></script>
+  <script src="../../js/pages/student/student.js"></script>
+  <script src="../../js/pages/student/qr-checkin.js"></script>
 </body>
 </html>
+
