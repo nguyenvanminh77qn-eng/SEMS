@@ -1,0 +1,8 @@
+{
+  "name": "sems-admin",
+  "private": true,
+  "scripts": {
+    "start": "node frontend/server.js",
+    "dev": "node frontend/server.js"
+  }
+}
