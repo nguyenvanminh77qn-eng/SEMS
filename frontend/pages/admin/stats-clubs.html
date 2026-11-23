@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top đơn vị/CLB hiệu quả nhất - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/stats-clubs.css">
+</head>
+<body data-sems-page="stats-clubs">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Top đơn vị/CLB hiệu quả nhất</h1>
+
+      <!-- Filter Bar -->
+      <section class="card filter-card">
+        <span class="filter-item-label">Thống kê theo năm</span>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="clubYearSelect">
+            <option value="2024">2024</option>
+            <option value="2023" selected>2023</option>
+            <option value="2022">2022</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="clubSemesterSelect">
+            <option value="">Học kỳ</option>
+            <option value="1">Học kỳ 1</option>
+            <option value="2">Học kỳ 2</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="clubMonthSelect">
+            <option value="">Tháng</option>
+            <option value="1">Tháng 1</option>
+            <option value="2">Tháng 2</option>
+            <option value="3">Tháng 3</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnFilterSubmit">Thống kê</button>
+        <button class="btn btn-secondary" id="btnResetFilter">Đặt lại</button>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng đơn vị/CLB</div>
+          <div class="kpi-value" id="kpiClubsCount">150</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng sự kiện</div>
+          <div class="kpi-value" id="kpiClubsEvents">750</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng lượt tham gia</div>
+          <div class="kpi-value" id="kpiClubsStudents">12,500</div>
+        </div>
+      </section>
+
+      <!-- Ranking Table Section -->
+      <section class="card">
+        <h2 class="chart-title">Xếp hạng đơn vị/CLB</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Xếp hạng</th>
+                <th>Tên đơn vị/CLB</th>
+                <th>Số sự kiện tổ chức</th>
+                <th>Số sinh viên tham gia</th>
+                <th>Tỷ lệ tham gia</th>
+              </tr>
+            </thead>
+            <tbody id="clubsRankingTableBody">
+              <!-- Rendered by JS with See More functionality -->
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align: center;">
+          <button class="btn btn-show-more" id="btnShowMore">Xem thêm</button>
+        </div>
+      </section>
+
+      <!-- Horizontal Bar Chart Section -->
+      <section class="card">
+        <h2 class="chart-title">Top 5 đơn vị/CLB theo lượt tham gia</h2>
+        <div id="clubsParticipationChart"></div>
+      </section>
+    </main>
+
+  <script src="../../js/components/charts.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/stats-clubs.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống kê số sự kiện - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/stats-events.css">
+</head>
+<body data-sems-page="stats-events">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Thống kê số sự kiện</h1>
+
+      <!-- Filter Bar -->
+      <section class="card filter-card">
+        <span class="filter-item-label">Thống kê theo năm</span>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="eventYearSelect">
+            <option value="2024">2024</option>
+            <option value="2023" selected>2023</option>
+            <option value="2022">2022</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="eventSemesterSelect">
+            <option value="">Học kỳ</option>
+            <option value="1">Học kỳ 1</option>
+            <option value="2">Học kỳ 2</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="eventMonthSelect">
+            <option value="">Tháng</option>
+            <option value="Tháng 1">Tháng 1</option>
+            <option value="Tháng 2">Tháng 2</option>
+            <option value="Tháng 3">Tháng 3</option>
+            <option value="Tháng 4">Tháng 4</option>
+            <option value="Tháng 5">Tháng 5</option>
+            <option value="Tháng 6">Tháng 6</option>
+            <option value="Tháng 7">Tháng 7</option>
+            <option value="Tháng 8">Tháng 8</option>
+            <option value="Tháng 9">Tháng 9</option>
+            <option value="Tháng 10">Tháng 10</option>
+            <option value="Tháng 11">Tháng 11</option>
+            <option value="Tháng 12">Tháng 12</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnFilterSubmit">Thống kê</button>
+        <button class="btn btn-secondary" id="btnResetFilter">Đặt lại</button>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng số sự kiện</div>
+          <div class="kpi-value" id="kpiTotalEvents">120</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Sự kiện đã diễn ra</div>
+          <div class="kpi-value" id="kpiPastEvents">85</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Sự kiện sắp diễn ra</div>
+          <div class="kpi-value" id="kpiUpcomingEvents">35</div>
+        </div>
+      </section>
+
+      <!-- Bar Chart Section -->
+      <section class="card chart-card">
+        <h2 class="chart-title">Số lượng sự kiện theo thời gian</h2>
+        <div id="eventsMonthlyChart"></div>
+      </section>
+
+      <!-- Detail Table Section -->
+      <section class="card">
+        <h2 class="chart-title">Chi tiết thống kê</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Tổng số sự kiện</th>
+                <th>Sự kiện đã diễn ra</th>
+                <th>Sự kiện sắp diễn ra</th>
+                <th>Sự kiện đã hủy</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="eventsMonthlyTableBody">
+              <!-- Rendered with interactive detail links -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+  <!-- MODAL: CHI TIẾT SỰ KIỆN THEO THÁNG -->
+  <div class="modal-overlay" id="modalMonthDetail">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="monthDetailModalTitle" style="font-size: 17px;">Danh sách sự kiện</h2>
+        <button class="modal-close-btn" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tên sự kiện</th>
+                <th>Đơn vị tổ chức</th>
+                <th>Ngày</th>
+                <th>Số SV</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="monthEventsTableBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer" style="padding: 16px 0 0; margin-top: 16px;">
+          <button type="button" class="btn btn-primary" data-close>Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/components/charts.js"></script>
+  <script src="../../js/components/modal.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/stats-events.js"></script>
+</body>
+</html>
