@@ -1,0 +1,98 @@
+/* SEMS DESIGN SYSTEM - CSS VARIABLES */
+:root {
+  /* Primary Palette */
+  --color-primary: #1E70EB;
+  --color-primary-hover: #1558C0;
+  --color-primary-active: #0E46A0;
+  --color-primary-light: #EBF3FE;
+  --color-primary-light-hover: #DFEDFD;
+
+  /* Secondary / Neutral Palette */
+  --color-secondary: #6C757D;
+  --color-secondary-hover: #5A6268;
+  --color-secondary-light: #F3F4F6;
+
+  /* Background Colors */
+  --color-bg-body: #F8F9FA;
+  --color-bg-sidebar: #FFFFFF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-table-header: #F9FAFB;
+  --color-bg-table-row-hover: #F8FAFC;
+  --color-bg-modal-backdrop: rgba(0, 0, 0, 0.45);
+
+  /* Text Colors */
+  --color-text-main: #1F2937;
+  --color-text-body: #374151;
+  --color-text-muted: #6B7280;
+  --color-text-white: #FFFFFF;
+  --color-text-link: #1E70EB;
+
+  /* Border Colors */
+  --color-border-card: #E5E7EB;
+  --color-border-input: #D1D5DB;
+  --color-border-input-focus: #1E70EB;
+  --color-border-table: #E5E7EB;
+  --color-border-sidebar: #E5E7EB;
+
+  /* Status Colors */
+  --color-success: #16A34A;
+  --color-success-bg: #22C55E;
+  --color-success-hover: #15803D;
+  --color-danger: #DC2626;
+  --color-danger-hover: #B91C1C;
+  --color-warning: #F59E0B;
+  --color-warning-hover: #D97706;
+
+  /* Typography */
+  --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 32px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Dimensions */
+  --sidebar-width: 250px;
+  --header-height: 0px;
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.2s ease-in-out;
+}
+

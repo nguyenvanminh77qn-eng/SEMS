@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gửi thông báo - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/notifications.css">
+</head>
+<body data-sems-page="notifications">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Gửi thông báo</h1>
+
+      <!-- Create Notification Form -->
+      <section class="card notification-form-card">
+        <form id="formNotification">
+          <div class="form-group">
+            <label class="form-label" for="notifyTitle">Tiêu đề thông báo:</label>
+            <input type="text" class="form-control" id="notifyTitle" placeholder="Nhập tiêu đề thông báo">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notifyContent">Nội dung thông báo:</label>
+            <textarea class="form-control" id="notifyContent" rows="4" placeholder="Nhập nội dung thông báo"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notifyTarget">Đối tượng nhận:</label>
+            <select class="form-control" id="notifyTarget">
+              <option value="Tất cả người dùng">Tất cả người dùng</option>
+              <option value="Sinh viên">Sinh viên</option>
+              <option value="Organizer">Organizer</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="notifyScope">Phạm vi thông báo:</label>
+            <select class="form-control" id="notifyScope">
+              <option value="Toàn hệ thống">Toàn hệ thống</option>
+              <option value="Khoa Công nghệ thông tin">Khoa Công nghệ thông tin</option>
+              <option value="Cấp CLB">Cấp CLB</option>
+            </select>
+          </div>
+
+          <div class="form-actions-right">
+            <button type="button" class="btn btn-outline" id="btnCancelNotification">Hủy</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitNotification">Gửi thông báo</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- History Table Section -->
+      <section class="card">
+        <div class="history-header">
+          <h2 class="history-title">Lịch sử thông báo</h2>
+          <div class="history-filters">
+            <div class="form-group">
+              <label class="form-label" for="historyTitleFilter">Tiêu đề</label>
+              <input type="text" class="form-control" id="historyTitleFilter" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="historyTargetFilter">Đối tượng nhận</label>
+              <input type="text" class="form-control" id="historyTargetFilter" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="historySenderFilter">Người gửi</label>
+              <input type="text" class="form-control" id="historySenderFilter" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="historyStatusFilter">Trạng thái</label>
+              <select class="form-control history-select" id="historyStatusFilter">
+                <option value="">Tất cả trạng thái</option>
+                <option value="Đã gửi">Đã gửi</option>
+                <option value="Chờ gửi">Chờ gửi</option>
+                <option value="Đã hủy">Đã hủy</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tiêu đề</th>
+                <th>Đối tượng nhận</th>
+                <th>Người gửi</th>
+                <th>Thời gian gửi</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="notificationHistoryBody">
+              <tr>
+                <td>Thông báo khẩn</td>
+                <td>Tất cả người dùng</td>
+                <td>Admin</td>
+                <td>2023-10-26 10:00</td>
+                <td>Đã gửi</td>
+              </tr>
+              <tr>
+                <td>Thông báo bảo trì</td>
+                <td>Sinh viên</td>
+                <td>Admin</td>
+                <td>2023-10-25 15:30</td>
+                <td>Đã gửi</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+  <!-- MODAL: XÁC NHẬN GỬI THÔNG BÁO (MH-25__Confirm) -->
+  <div class="modal-overlay" id="modalConfirmSend">
+    <div class="modal-content" style="max-width: 360px; padding: 24px;">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 16px; font-weight: 700; color: #1F2937; margin-bottom: 8px;">Xác nhận gửi thông báo</h2>
+        <p id="notificationConfirmText" style="font-size: 14px; color: #374151; line-height: 1.4;">Bạn có chắc chắn muốn gửi thông báo này?</p>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn btn-outline" data-close>Hủy</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmSend">Gửi</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/components/modal.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/notifications.js"></script>
+</body>
+</html>
+

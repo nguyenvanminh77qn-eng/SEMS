@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống kê lượt sinh viên tham gia - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/stats-students.css">
+</head>
+<body data-sems-page="stats-students">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Thống kê lượt sinh viên tham gia</h1>
+
+      <!-- Filter Bar -->
+      <section class="card filter-card">
+        <div class="filter-item">
+          <span class="filter-item-label">Năm</span>
+          <select class="form-control filter-select" id="studentYearSelect">
+            <option value="2022" selected>2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control" id="studentEventSelect" style="min-width: 160px;">
+            <option value="">Tất cả sự kiện</option>
+            <option value="Hội thảo Hướng nghiệp 2023">Hội thảo Hướng nghiệp 2023</option>
+            <option value="Giải bóng đá Sinh viên">Giải bóng đá Sinh viên</option>
+            <option value="Cuộc thi Sáng tạo Robot">Cuộc thi Sáng tạo Robot</option>
+            <option value="Ngày hội Tình nguyện">Ngày hội Tình nguyện</option>
+            <option value="Workshop Kỹ năng thuyết trình">Workshop Kỹ năng thuyết trình</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnFilterSubmit">Thống kê</button>
+        <button class="btn btn-secondary" id="btnResetFilter">Đặt lại</button>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng lượt tham gia</div>
+          <div class="kpi-value" id="kpiStudentTotal">850</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng sinh viên tham gia</div>
+          <div class="kpi-value" id="kpiStudentUnique">620</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tỷ lệ tham gia</div>
+          <div class="kpi-value" id="kpiStudentRate">78%</div>
+        </div>
+      </section>
+
+      <!-- Bar Chart Section -->
+      <section class="card chart-card">
+        <h2 class="chart-title">Lượt sinh viên tham gia theo thời gian</h2>
+        <div id="studentParticipationChart"></div>
+      </section>
+
+      <!-- Detail Table Section -->
+      <section class="card">
+        <h2 class="chart-title">Chi tiết lượt tham gia theo sự kiện</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tên sự kiện</th>
+                <th>Đơn vị/CLB tổ chức</th>
+                <th>Ngày tổ chức</th>
+                <th>Số SV đăng ký</th>
+                <th>Số SV tham gia</th>
+                <th>Tỷ lệ tham gia</th>
+              </tr>
+            </thead>
+            <tbody id="studentParticipationTableBody">
+              <!-- Rendered by JS with See More functionality -->
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align: center;">
+          <button class="btn btn-show-more" id="btnShowMore">Xem thêm</button>
+        </div>
+      </section>
+    </main>
+
+  <script src="../../js/components/charts.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/stats-students.js"></script>
+</body>
+</html>
+

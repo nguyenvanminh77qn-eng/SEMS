@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tỷ lệ đăng ký, tham gia thực tế và đánh giá sau sự kiện - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/stats-registration.css">
+</head>
+<body data-sems-page="stats-registration">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Tỷ lệ đăng ký, tham gia thực tế và đánh giá sau sự kiện</h1>
+
+      <!-- Filter Bar -->
+      <section class="card filter-card">
+        <span class="filter-item-label">Thống kê theo</span>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="regYearSelect">
+            <option value="2024">2024</option>
+            <option value="2023" selected>2023</option>
+            <option value="2022">2022</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="regSemesterSelect">
+            <option value="">Học kỳ</option>
+            <option value="1">Học kỳ 1</option>
+            <option value="2">Học kỳ 2</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <select class="form-control filter-select" id="regMonthSelect">
+            <option value="">Tháng</option>
+            <option value="1">Tháng 1</option>
+            <option value="2">Tháng 2</option>
+            <option value="3">Tháng 3</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnFilterSubmit">Thống kê</button>
+        <button class="btn btn-secondary" id="btnResetFilter">Đặt lại</button>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng lượt đăng ký</div>
+          <div class="kpi-value" id="kpiRegTotal">1200</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng lượt tham gia thực tế</div>
+          <div class="kpi-value kpi-success" id="kpiRegAttended">950</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Điểm đánh giá trung bình</div>
+          <div class="kpi-value kpi-warning" id="kpiRegRating">4.2</div>
+        </div>
+      </section>
+
+      <!-- Dual Charts Section -->
+      <section class="dual-charts-grid">
+        <!-- Left: Reg vs Attendance Chart -->
+        <div class="card">
+          <div class="chart-header-with-legend">
+            <h2 class="chart-title">Đăng ký vs Tham gia thực tế theo sự kiện</h2>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <span class="legend-box-primary"></span>
+                <span>Số đăng ký</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-box-secondary"></span>
+                <span>Thực tế</span>
+              </div>
+            </div>
+          </div>
+          <div id="regVsAttChart"></div>
+        </div>
+
+        <!-- Right: Average Rating Chart -->
+        <div class="card">
+          <div class="chart-header-with-legend">
+            <h2 class="chart-title">Điểm đánh giá trung bình sau sự kiện(Thang điểm 5)</h2>
+          </div>
+          <div id="ratingChart"></div>
+        </div>
+      </section>
+
+      <!-- Detail Table Section -->
+      <section class="card">
+        <h2 class="chart-title" style="margin-bottom: 16px;">Chi tiết sự kiện</h2>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tên sự kiện</th>
+                <th>Số đăng ký</th>
+                <th>Số tham gia</th>
+                <th>Tỷ lệ tham gia</th>
+                <th>Điểm đánh giá trung bình</th>
+              </tr>
+            </thead>
+            <tbody id="regEventsTableBody">
+              <!-- Rendered by JS with See More functionality -->
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align: center;">
+          <button class="btn btn-show-more" id="btnShowMore">Xem thêm</button>
+        </div>
+      </section>
+    </main>
+
+  <script src="../../js/components/charts.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/stats-registration.js"></script>
+</body>
+</html>
+

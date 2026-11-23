@@ -1,0 +1,152 @@
+/* CSS CHO TRANG QUẢN LÝ SINH VIÊN */
+
+.filter-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-action-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-filter-grid {
+  margin-bottom: 16px;
+}
+
+.table-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 8px 0 12px;
+}
+
+/* User identity card in Role Modal */
+.user-identity-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background-color: #F8FAFC;
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+}
+
+.identity-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #DCE8FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1E70EB;
+  flex-shrink: 0;
+}
+
+.identity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.identity-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.identity-email {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-xs);
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--color-text-body);
+  line-height: 1.4;
+}
+
+.radio-option input[type="radio"] {
+  margin-top: 3px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Action Icons States */
+.action-icon-btn.icon-shield {
+  color: #374151; /* Ban đầu icon màu đen/xám đậm */
+  transition: all var(--transition-fast);
+}
+
+.action-icon-btn.icon-shield.active-permission {
+  color: #16A34A !important; /* Khi đang thao tác chuyển sang màu xanh */
+  transform: scale(1.15);
+}
+
+.action-icon-btn.disabled,
+.action-icon-btn[disabled] {
+  color: #D1D5DB !important; /* Admin không có phần thao tác nên màu xám disable */
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Pagination interactive effects */
+.pagination-arrow {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-text-main);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.pagination-arrow:hover:not(:disabled) {
+  background-color: #EBF3FE;
+  color: var(--color-primary);
+}
+
+.pagination-arrow:disabled {
+  color: #D1D5DB;
+  cursor: not-allowed;
+}
+
+.pagination-dots .dot {
+  cursor: pointer;
+  padding: 2px;
+}
+
+.pagination-dots .dot:hover:not(.active) {
+  background-color: #9CA3AF;
+  border-color: #4B5563;
+}
