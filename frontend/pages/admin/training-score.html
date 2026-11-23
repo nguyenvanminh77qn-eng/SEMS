@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đánh giá điểm rèn luyện - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/training-score.css">
+</head>
+<body data-sems-page="training-score">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+      <h1 class="page-title">Đánh giá điểm rèn luyện</h1>
+
+      <!-- Filter Bar -->
+      <section class="card">
+        <div class="filter-grid-four">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterYear">Năm học</label>
+            <select class="form-control" id="filterYear">
+              <option value="2023-2024" selected>2023-2024</option>
+              <option value="2022-2023">2022-2023</option>
+              <option value="2021-2022">2021-2022</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterSemester">Học kỳ</label>
+            <select class="form-control" id="filterSemester">
+              <option value="Học kỳ 1" selected>Học kỳ 1</option>
+              <option value="Học kỳ 2">Học kỳ 2</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterStudentId">Mã sinh viên</label>
+            <input type="text" class="form-control" id="filterStudentId" autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterStudentName">Họ và tên</label>
+            <input type="text" class="form-control" id="filterStudentName" autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterFaculty">Khoa</label>
+            <input type="text" class="form-control" id="filterFaculty" autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterClass">Lớp</label>
+            <input type="text" class="form-control" id="filterClass" autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filterRank">Xếp hạng</label>
+            <select class="form-control" id="filterRank">
+              <option value="">Tất cả</option>
+              <option value="Xuất sắc">Xuất sắc</option>
+              <option value="Giỏi">Giỏi</option>
+              <option value="Khá">Khá</option>
+              <option value="Trung bình">Trung bình</option>
+              <option value="Yếu">Yếu</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <button class="btn btn-secondary" id="btnResetFilter">Đặt lại</button>
+        </div>
+      </section>
+
+      <!-- KPI Summary Cards -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Tổng sinh viên</div>
+          <div class="kpi-value" id="kpiTotal">1500</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Đủ điều kiện ghi nhận điểm</div>
+          <div class="kpi-value kpi-success" id="kpiEligible">1200</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Chưa đủ điều kiện</div>
+          <div class="kpi-value kpi-danger" id="kpiNotEligible">300</div>
+        </div>
+      </section>
+
+      <!-- Data Table Section -->
+      <section class="card">
+        <p class="table-result-summary" id="trainingResultSummary" aria-live="polite"></p>
+        <div class="table-top-actions">
+          <label class="select-all-label">
+            <input type="checkbox" class="table-checkbox" id="selectAllResults">
+            <span>Chọn tất cả sinh viên trong danh sách kết quả</span>
+          </label>
+          <button class="btn btn-success" id="btnExportExcel">Xuất Excel</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align: center;"></th>
+                <th>Mã sinh viên</th>
+                <th>Họ và tên</th>
+                <th>Khoa</th>
+                <th>Lớp</th>
+                <th>Số hoạt động tham gia</th>
+                <th>Điểm rèn luyện</th>
+                <th>Xếp hạng</th>
+              </tr>
+            </thead>
+            <tbody id="trainingTableBody">
+              <!-- Rendered dynamically by JavaScript with See More capability -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="text-align: center;">
+          <button class="btn btn-show-more" id="btnShowMore">Xem thêm</button>
+        </div>
+
+        <div class="table-footnote">
+          Lưu ý: Dữ liệu xuất ra được sử dụng để ghi nhận điểm rèn luyện của sinh viên.
+        </div>
+      </section>
+    </main>
+
+  <!-- MODAL: CHI TIẾT HOẠT ĐỘNG THAM GIA CỦA SINH VIÊN -->
+  <div class="modal-overlay" id="modalActivityDetails">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="activityModalTitle" style="font-size: 17px;">Chi tiết hoạt động tham gia</h2>
+        <button class="modal-close-btn" data-close>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 14px; font-size: 14px; color: #4B5563;" id="activityStudentSummary">
+          Sinh viên: <strong>Nguyễn Văn A (SV001)</strong> - Lớp: <strong>KTPM1-K18</strong>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên hoạt động / Sự kiện</th>
+                <th>Ngày tham gia</th>
+                <th>Đơn vị tổ chức</th>
+                <th>Điểm cộng</th>
+              </tr>
+            </thead>
+            <tbody id="activityDetailsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer" style="padding: 16px 0 0; margin-top: 16px;">
+          <button type="button" class="btn btn-primary" data-close>Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../js/components/modal.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/training-score.js"></script>
+</body>
+</html>

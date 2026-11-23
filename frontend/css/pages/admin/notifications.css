@@ -1,0 +1,61 @@
+/* CSS CHO TRANG GỬI THÔNG BÁO */
+
+.notification-form-card {
+  margin-bottom: 24px;
+}
+
+.notification-form-card .form-group {
+  margin-bottom: 14px;
+}
+
+.form-actions-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.history-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.history-filters {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(150px, 0.8fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.history-filters .form-group {
+  margin-bottom: 0;
+}
+
+.history-select {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .history-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .history-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
