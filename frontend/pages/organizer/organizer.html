@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEMS - Organizer Dashboard</title>
+
+    <!-- CSS: thứ tự nạp quan trọng (chung trước, từng màn hình sau) -->
+    <link rel="stylesheet" href="../../css/pages/organizer/base.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/header.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/common.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/mh-4-21-events.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/mh-4-19-registration.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/mh-4-20-qr.css">
+    <link rel="stylesheet" href="../../css/pages/organizer/mh-4-22-statistics.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ============================================================
+             HEADER (dùng chung)   |   css/header.css  +  js/header.js
+             ============================================================ -->
+        <header class="header">
+            <div class="header-left">
+                <img src="../../images\student/logo.png" alt="Logo Đại học Quy Nhơn" class="school-logo">
+                <div>
+                    <h1>Organizer Dashboard - Overview</h1>
+                    <p>Hệ thống quản lý sự kiện sinh viên</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <span id="currentDate"></span>
+                <span id="currentTime"></span>
+                <!-- Thông báo -->
+                <div class="header-menu">
+                    <button class="header-icon" id="bellButton" title="Thông báo"
+                        onclick="toggleMenu('notifyMenu', event)">
+                        <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                        <span class="badge" id="notifyBadge">0</span>
+                    </button>
+
+                    <div class="dropdown notify-dropdown" id="notifyMenu">
+                        <div class="notify-head">
+                            <strong>Thông báo</strong>
+                            <button onclick="markAllNotificationsRead()">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notify-list" id="notifyList"></div>
+                    </div>
+                </div>
+
+                <!-- Tài khoản -->
+                <div class="header-menu">
+                    <button class="header-icon avatar-btn" id="avatarButton" title="Tài khoản"
+                        onclick="toggleMenu('accountMenu', event)">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </button>
+
+                    <div class="dropdown" id="accountMenu">
+                        <div class="dropdown-name">
+                            <span id="accountName"></span>
+                            <small>Organizer</small>
+                        </div>
+                        <div class="dropdown-list">
+                            <button class="dropdown-item" onclick="showToast('Chức năng Hồ sơ nằm ngoài phạm vi màn hình Organizer.')">
+                                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                                Hồ sơ của tôi
+                            </button>
+                            <button class="dropdown-item" onclick="showToast('Chức năng Đổi mật khẩu nằm ngoài phạm vi màn hình Organizer.')">
+                                <svg viewBox="0 0 24 24"><path d="M2 17h20v2H2v-2zm1.15-4.05L4 11.47l.85 1.48 1.3-.75-.85-1.48H7v-1.5H5.3l.85-1.47L4.85 7 4 8.47 3.15 7l-1.3.75.85 1.47H1v1.5h1.7l-.85 1.48 1.3.75zm6.7-.75l1.3.75.85-1.48.85 1.48 1.3-.75-.85-1.48H15v-1.5h-1.7l.85-1.47-1.3-.75L12 8.47 11.15 7l-1.3.75.85 1.47H9v1.5h1.7l-.85 1.48zM23 9.22h-1.7l.85-1.47-1.3-.75L20 8.47 19.15 7l-1.3.75.85 1.47H17v1.5h1.7l-.85 1.48 1.3.75.85-1.48.85 1.48 1.3-.75-.85-1.48H23v-1.5z"/></svg>
+                                Đổi mật khẩu
+                            </button>
+                        </div>
+                        <button class="logout-button" onclick="logout()">Đăng xuất</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT: mỗi <section class="page"> là một màn hình -->
+        <main>
+
+            <!-- ============================================================
+                 MH 4.21 - Danh sách sự kiện được phân công (trang danh sách)
+                 css/mh-4-21-events.css  +  js/mh-4-21-events.js
+                 ============================================================ -->
+            <section id="eventPage" class="page active">
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input type="text" id="searchInput"
+                            placeholder="Tìm kiếm sự kiện...">
+                    </div>
+
+                    <select id="statusFilter">
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="upcoming">Chưa diễn ra</option>
+                        <option value="ongoing">Đang diễn ra</option>
+                        <option value="ended">Đã kết thúc</option>
+                    </select>
+                </div>
+
+                <div id="eventList" class="event-grid"></div>
+
+                <div class="pagination" id="pagination"></div>
+
+            </section>
+
+            <!-- ============================================================
+                 MH 4.21 - Chi tiết sự kiện
+                 (có nút mở MH 4.20 ở cuối trang)
+                 ============================================================ -->
+            <section id="detailPage" class="page">
+
+                <button class="back-button" onclick="showEventPage()">
+                    ← Quản lý sự kiện
+                </button>
+
+                <div class="detail-container">
+
+                    <div class="detail-cover" id="detailCover">
+                        <span id="detailCoverText"></span>
+                        <span id="detailStatus" class="status-badge"></span>
+                    </div>
+
+                    <h2 id="detailName" class="detail-title"></h2>
+
+                    <div class="description-section">
+                        <h3>Mô tả chương trình</h3>
+                        <p id="detailDescription"></p>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>▣ Thông tin sự kiện</h3>
+
+                        <div class="info-row">
+                            <span>▦ Thời gian sự kiện</span>
+                            <strong id="detailTime"></strong>
+                        </div>
+
+                        <div class="info-row">
+                            <span>⚲ Địa điểm</span>
+                            <strong id="detailLocation"></strong>
+                        </div>
+
+                        <div class="info-row">
+                            <span>ⓘ Đơn vị tổ chức</span>
+                            <strong id="detailOrganizer"></strong>
+                        </div>
+
+                        <div class="info-row">
+                            <span>♙ Số lượng người tham gia</span>
+
+                            <div class="participant-box">
+                                <button id="participantButton"
+                                    class="participant-button">
+                                </button>
+
+                                <div class="progress-container">
+                                    <div id="detailProgress"
+                                        class="progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Nút mở mã QR (MH 4.20) - css/mh-4-20-qr.css -->
+                    <div class="qr-action" id="qrAction">
+                        <button class="qr-button" onclick="openQRModal()">
+                            ▦ MÃ QR ĐIỂM DANH
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 MH 4.19 - Danh sách người đăng ký
+                 css/mh-4-19-registration.css  +  js/mh-4-19-registration.js
+                 ============================================================ -->
+            <section id="registrationPage" class="page">
+
+                <div class="sub-toolbar">
+
+                    <button class="back-button" onclick="backFromRegistration()">
+                        ← Quay lại
+                    </button>
+
+                    <div class="export-actions">
+                        <button id="exportExcel" onclick="exportExcel()">
+                            ▣ Xuất Excel
+                        </button>
+
+                        <button id="exportPDF" onclick="exportPDF()">
+                            ▧ Xuất PDF
+                        </button>
+                    </div>
+
+                </div>
+
+                <h2 class="page-title">Danh sách người đăng ký tham gia</h2>
+
+                <div class="registration-search">
+                    <input type="text" id="studentSearch"
+                        placeholder="⌕ Nhập Tên, Mã sinh viên">
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên người dùng</th>
+                                <th>Mã sinh viên</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="studentTable"></tbody>
+                    </table>
+                </div>
+
+                <p id="studentCount" class="student-count"></p>
+
+            </section>
+
+            <!-- ============================================================
+                 MH 4.22 - Thống kê và báo cáo sự kiện (điểm danh và thống kê)
+                 css/mh-4-22-statistics.css  +  js/mh-4-22-statistics.js
+                 ============================================================ -->
+            <section id="statisticsPage" class="page">
+
+                <!-- 1. Nút Quay lại -->
+                <button class="back-button" onclick="showDetailPage()">
+                    ← Quay lại
+                </button>
+
+                <div class="att-title-row">
+                    <h2 class="page-title">Điểm danh và thống kê sự kiện</h2>
+                    <span id="submitState" class="submit-pill"></span>
+                    <p id="statisticsEventName" class="att-event-name"></p>
+                </div>
+
+                <div class="attendance-layout">
+
+                    <!-- 2. Ô tìm kiếm -->
+                    <div class="att-search">
+                        <input type="text" id="attendanceSearch"
+                            placeholder="⌕ Nhập Tên, Mã sinh viên">
+                    </div>
+
+                    <!-- 3. Bộ lọc trạng thái -->
+                    <div class="att-filter">
+                        <select id="attendanceFilter">
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="present">Đã điểm danh</option>
+                            <option value="none">Chưa điểm danh</option>
+                            <option value="late">Đến muộn</option>
+                            <option value="absent">Vắng mặt</option>
+                        </select>
+                    </div>
+
+                    <div class="att-main">
+
+                        <!-- 4 - 12. Bảng danh sách -->
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên người dùng</th>
+                                        <th>Mã sinh viên</th>
+                                        <th>Lớp</th>
+                                        <th>Khoa</th>
+                                        <th>Trạng thái</th>
+                                        <th>Bằng chứng điểm danh</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTable"></tbody>
+                            </table>
+                        </div>
+
+                        <p id="attendanceCount" class="student-count"></p>
+
+                        <!-- 13. Phân trang -->
+                        <div class="pagination" id="attendancePagination"></div>
+
+                        <div class="att-actions">
+                            <!-- 17. Danh sách người đăng ký (mở MH 4.19) -->
+                            <button class="secondary-button"
+                                onclick="showRegistrationPage('statistics')">
+                                Danh sách người đăng ký
+                            </button>
+
+                            <!-- 18. Nộp lên hệ thống -->
+                            <button class="primary-button" id="submitResultButton"
+                                onclick="submitAttendance()">
+                                Nộp lên hệ thống
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- 14 - 16. Biểu đồ thống kê -->
+                    <aside class="att-chart">
+                        <div class="chart-card">
+
+                            <div class="chart-title">
+                                <svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+                                <span>Thống kê người tham gia</span>
+                            </div>
+
+                            <div class="chart-legend">
+                                <span><i class="legend-dot dot-present"></i>Đã điểm danh</span>
+                                <span><i class="legend-dot dot-absent"></i>Vắng</span>
+                            </div>
+
+                            <div class="chart-bars" id="attendanceChart"></div>
+
+                            <p class="chart-note">
+                                “Đã điểm danh” gồm cả Đến muộn. “Vắng” gồm Chưa điểm danh và Vắng mặt.
+                            </p>
+
+                        </div>
+                    </aside>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ============================================================
+         MH 4.20 - Hộp thoại mã QR điểm danh
+         css/mh-4-20-qr.css  +  js/mh-4-20-qr.js
+         ============================================================ -->
+    <div id="qrModal" class="modal">
+
+        <div class="modal-content">
+
+            <button class="close-modal" onclick="closeQRModal()">×</button>
+
+            <h2>MÃ QR ĐIỂM DANH</h2>
+
+            <p id="qrEventName"></p>
+
+            <div class="qr-refresh-row">
+                <span id="qrCountdown">Tự làm mới sau 10:00</span>
+                <button onclick="refreshQR()" class="refresh-button">
+                    ↻ Tải lại mã QR
+                </button>
+            </div>
+
+            <div id="qrcode"></div>
+
+            <p class="qr-note">
+                Sinh viên quét mã QR để thực hiện điểm danh sự kiện.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+         HỘP THOẠI XÁC NHẬN + TOAST (dùng chung)
+         css/common.css  +  js/ui.js
+         ============================================================ -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content confirm-content">
+            <h2 id="confirmTitle">Xác nhận</h2>
+            <p id="confirmMessage"></p>
+            <div class="confirm-actions">
+                <button class="secondary-button" onclick="closeConfirm()">Hủy</button>
+                <button class="primary-button" id="confirmOk">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Thư viện tạo mã QR (dùng cho MH 4.20) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- JS: thứ tự nạp quan trọng.
+         data -> core -> ui -> header -> các màn hình -> main (luôn cuối cùng) -->
+    <!-- <script src="api.js"></script> -->
+   <script src="../../js/pages/organizer/data.js"></script>
+    <script src="../../js/pages/organizer/core.js"></script>
+    <script src="../../js/pages/organizer/ui.js"></script>
+    <script src="../../js/pages/organizer/header.js"></script>
+    <script src="../../js/pages/organizer/mh-4-21-events.js"></script>
+    <script src="../../js/pages/organizer/mh-4-19-registration.js"></script>
+    <script src="../../js/pages/organizer/mh-4-20-qr.js"></script>
+    <script src="../../js/pages/organizer/mh-4-22-statistics.js"></script>
+    <script src="../../js/pages/organizer/main.js"></script>
+
+</body>
+</html>
