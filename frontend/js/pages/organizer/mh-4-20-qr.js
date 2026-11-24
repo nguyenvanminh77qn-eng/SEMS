@@ -41,6 +41,19 @@ function openQRModal() {
 }
 
 
+// Tạo token ngẫu nhiên.
+// crypto.randomUUID() chỉ có trên trang https/localhost; mở bằng địa chỉ khác sẽ bị lỗi,
+// nên có phương án dự phòng.
+function createToken() {
+
+    if (window.crypto && typeof crypto.randomUUID === "function") {
+        return crypto.randomUUID();
+    }
+
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+
 // ------------------------------------------
 // Tạo và tải lại QR
 // ------------------------------------------
@@ -55,11 +68,11 @@ function refreshQR() {
 
     qrContainer.innerHTML = "";
 
+    // Nội dung QR: chỉ cần mã sự kiện + token, giữ ngắn để mã dễ quét và không bị lỗi
     const qrData = JSON.stringify({
-        eventId: currentEvent.id,
-        eventName: currentEvent.name,
-        token: crypto.randomUUID(),
-        createdAt: new Date().toISOString()
+        e: currentEvent.id,
+        t: createToken(),
+        c: Date.now()
     });
 
     if (typeof QRCode === "undefined") {
@@ -70,14 +83,20 @@ function refreshQR() {
         return;
     }
 
-    new QRCode(qrContainer, {
-        text: qrData,
-        width: 200,
-        height: 200,
-        colorDark: "#113163",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-    });
+    try {
+        new QRCode(qrContainer, {
+            text: qrData,
+            width: 200,
+            height: 200,
+            colorDark: "#113163",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    } catch (error) {
+        console.error("Lỗi tạo mã QR:", error);
+        qrContainer.textContent = "Không tạo được mã QR. Vui lòng bấm Tải lại mã QR.";
+        return;
+    }
 
     // Đặt lại thời gian đếm ngược
 
