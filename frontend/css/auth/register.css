@@ -1,0 +1,16 @@
+/* SEMS – Trang đăng ký (register.html). Nạp sau common.css. */
+.steps{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);list-style:none;margin:0;padding:0}
+.steps .s{display:flex;align-items:center;gap:8px}
+.steps .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--field);border:1.5px solid var(--fline);color:var(--muted)}
+.steps .bar{width:34px;height:2px;background:var(--fline);border-radius:2px}
+.steps .s.cur{color:var(--ink);font-weight:600}
+.steps .s.cur .n{background:var(--blue);border-color:var(--blue);color:var(--white)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px}
+.gender{border:0;padding:0;margin:8px 0 0;display:flex;gap:24px;flex-wrap:wrap}
+.gender legend{width:100%;padding:0}
+.gender label{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.gender input{width:18px;height:18px;accent-color:var(--blue)}
+
+
+@media(max-width:560px){.grid2{grid-template-columns:1fr}.steps .t{display:none}}

@@ -1,0 +1,47 @@
+/* SEMS – Trang chủ (home.html). Nạp sau common.css. */
+.hero{background:var(--gradient-hero);color:var(--white)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-top:56px;padding-bottom:56px}
+.hero h1{font-size:40px;line-height:1.15;margin:0 0 14px}
+.hero p{margin:0 0 22px;opacity:.92;max-width:46ch}
+.hero .ph{aspect-ratio:16/10;border-radius:10px;color:var(--muted)}
+.search{display:flex;gap:8px;background:var(--white);border-radius:8px;padding:6px}
+.search input{flex:1;min-width:0;border:0;font:inherit;padding:8px 10px;color:var(--text);background:transparent}
+.hero .search .btn.pri{background:var(--orange);border-color:var(--orange)}
+.tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.tags select{flex:1 1 150px;min-width:0;background:var(--white);color:var(--text);border:1px solid var(--white);border-radius:6px;padding:8px 10px;font:inherit;font-size:14px;cursor:pointer}
+
+section{padding:48px 0}
+section.tight{padding-top:8px}
+section.none{padding:0}
+h2{font-size:24px;margin:0 0 24px}
+h2 a{font-size:15px;font-weight:400;color:var(--blue);text-decoration:underline;margin-left:6px}
+.center{text-align:center}
+
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.role{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:28px 22px;text-align:center;border-top:3px solid var(--blue)}
+.role:nth-child(2){border-top-color:var(--orange)}
+.role:nth-child(3){border-top-color:var(--green)}
+.role .ic{font-size:30px}
+.role h3{margin:8px 0 6px;font-size:16px}
+.role p{margin:0 0 16px;color:var(--muted);font-size:13px}
+
+.events{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.event .ph{aspect-ratio:4/3;margin-bottom:12px}
+.event h3{margin:0 0 4px;font-size:15px}
+.event p{margin:0;color:var(--muted);font-size:13px}
+.event .act{display:flex;gap:8px;margin-top:14px}
+
+.news{display:grid;grid-template-columns:1fr 1fr;gap:24px 48px}
+.item{display:flex;gap:14px}
+.item .ph{width:88px;height:68px;flex:none}
+.item h3{margin:0;font-size:14px}
+.item p{margin:2px 0;color:var(--muted);font-size:12px}
+.item a{color:var(--blue);font-size:12px;text-decoration:underline}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat{background:var(--stat);border-radius:10px;padding:26px 12px;text-align:center}
+.stat b{display:block;font-size:34px;color:var(--orange-d)}
+.stat span{font-size:13px;color:var(--muted)}
+
+@media(max-width:900px){.events{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.hero .wrap{grid-template-columns:1fr}}
+@media(max-width:700px){.roles,.news{grid-template-columns:1fr}.hero h1{font-size:30px}}
