@@ -1,0 +1,42 @@
+/* SEMS – Trang tin tức & thông báo (news.html). Nạp sau common.css. */
+
+/* Header riêng của trang: nút QR + menu tài khoản */
+nav a.on{font-weight:700}
+.auth{align-items:center;gap:14px}
+header .btn.qr{display:inline-flex;align-items:center;gap:8px;background:var(--orange);border:0;color:var(--white);font-weight:700;font-size:14px;padding:9px 16px;border-radius:8px;white-space:nowrap}
+header .btn.qr:hover{background:var(--orange-d)}
+.user{position:relative}
+.user summary{list-style:none;display:flex;align-items:center;gap:6px;cursor:pointer;border-radius:999px;padding:2px 8px 2px 2px}
+.user summary::-webkit-details-marker{display:none}
+.user summary:hover{background:rgba(255,255,255,.12)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--white);color:var(--head);display:grid;place-items:center}
+.caret{border:5px solid transparent;border-top-color:var(--white);border-bottom:0}
+.user[open] .caret{transform:rotate(180deg)}
+.menu{position:absolute;right:0;top:calc(100% + 10px);min-width:230px;background:var(--white);color:var(--text);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(17,49,99,.22);padding:6px;z-index:10}
+.menu .who{padding:10px 12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.menu .who b{display:block;font-size:14px}
+.menu .who span{font-size:12px;color:var(--muted)}
+.menu a{display:block;padding:9px 12px;border-radius:6px;font-size:14px}
+.menu a:hover{background:var(--hover-soft)}
+
+/* Nội dung trang */
+.news-page{padding-top:36px;padding-bottom:24px}
+.news-page h1{font-size:28px;margin:0 0 20px}
+.search-row{display:flex;gap:10px;margin-bottom:16px}
+.search-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;font-size:14px;background:var(--white);color:var(--text)}
+.filter-row{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-bottom:28px}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filters select{border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;font-size:14px;background:var(--white);color:var(--text);min-width:150px;cursor:pointer}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 28px}
+.news-card .ph{aspect-ratio:4/3;margin-bottom:14px;border-radius:4px}
+.news-card h3{margin:0 0 6px;font-size:16px}
+.news-card p{margin:0 0 4px;color:var(--muted);font-size:13px}
+.news-card .btn{margin-top:10px}
+.pager{display:flex;justify-content:center;gap:14px;margin:44px 0 16px}
+.pager a{min-width:44px;height:44px;padding:0 14px;display:grid;place-items:center;border:1px solid var(--text);border-radius:999px;font-size:16px;color:var(--text)}
+.pager a:hover{background:var(--hover-soft)}
+.pager a.cur{background:var(--blue);border-color:var(--blue);color:var(--white)}
+
+@media(max-width:900px){.news-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){header .btn.qr{padding:8px 10px;font-size:0;gap:0}header .btn.qr svg{width:22px;height:22px}}
+@media(max-width:600px){.news-grid{grid-template-columns:1fr}.search-row{flex-direction:column}.filters select{flex:1 1 140px}}
