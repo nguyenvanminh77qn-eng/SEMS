@@ -1,0 +1,23 @@
+/* Cổng thông tin sinh viên - CSS riêng cho trang event-register.html (nạp sau student.css) */
+
+.span2 { grid-column: 1 / -1; }
+
+.card-title { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 14px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.notes { margin: 0; padding-left: 18px; display: grid; gap: 10px; }
+
+.reg-side { min-width: 0; }
+
+.banner { border-radius: var(--radius); padding: 20px 24px; }
+
+.banner-ok { background: #1f8a43; color: #fff; }
+
+.banner-warn { background: #fff1d1; color: #6b4300; border: 1px solid #f3cf84; padding: 14px 18px; font-size: 14.5px; }
+
+.guide { padding-left: 20px; display: grid; gap: 8px; margin: 0 0 20px; }
+
+@media (max-width: 980px) {
+  .reg-side { order: 2; }
+}

@@ -1,0 +1,48 @@
+/* Cổng thông tin sinh viên - CSS riêng cho trang notifications.html (nạp sau student.css) */
+
+/* ---------- MH-07 Thông báo ---------- */
+.notice-list { display: grid; gap: 14px; }
+
+.notice {
+  position: relative; display: grid; grid-template-columns: 1fr auto; gap: 4px 16px;
+  padding: 18px 22px 18px 34px;
+}
+
+.notice .dot {
+  position: absolute; left: 14px; top: 26px; width: 9px; height: 9px; border-radius: 50%;
+  background: #d92d20; box-shadow: 0 0 0 4px rgba(217, 45, 32, 0.12);
+}
+
+.notice.is-read .dot { display: none; }
+
+.notice.is-unread { border-color: #b9cdee; background: linear-gradient(90deg, #f5f9ff, #fff 40%); }
+
+.notice-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
+
+.notice-side { grid-column: 2; grid-row: 1 / span 3; align-self: start; }
+
+.notice-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-top: 6px; }
+
+.notice.is-read .notice-title { font-weight: 600; }
+
+.notice-sum { max-width: 70ch; }
+
+.notice-link { margin-top: 8px; font-weight: 600; justify-self: start; }
+
+.pagination { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
+
+.page-btn {
+  min-width: 38px; height: 38px; padding: 0 10px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line); background: #fff; color: var(--ink); font-weight: 600; cursor: pointer;
+}
+
+.page-btn:hover:not([disabled]):not([aria-current]) { background: var(--gray-tint); }
+
+.page-btn[aria-current="page"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+.page-btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+@media (max-width: 680px) {
+  .notice { grid-template-columns: 1fr; padding-left: 30px; }
+  .notice-side { grid-column: 1; grid-row: auto; order: -1; }
+}
