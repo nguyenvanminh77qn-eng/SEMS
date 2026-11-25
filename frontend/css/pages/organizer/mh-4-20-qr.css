@@ -1,0 +1,75 @@
+/* ==========================================
+   MH 4.20 - Hiển thị mã QR điểm danh tại địa điểm tổ chức
+   (đi cùng js/mh-4-20-qr.js)
+   Khung hộp thoại (.modal, .modal-content, .close-modal) dùng style chung trong common.css
+   ========================================== */
+
+/* Nút mở QR nằm ở trang chi tiết sự kiện */
+
+.qr-action {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.qr-button {
+    padding: 10px 26px;
+    background: var(--orange);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.qr-button:hover {
+    background: var(--orange-dark);
+}
+
+/* Nội dung hộp thoại QR */
+
+.qr-refresh-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+#qrCountdown {
+    font-size: 12px;
+    color: #6f7b96;
+}
+
+.refresh-button {
+    border: 1px solid var(--navy);
+    background: white;
+    color: var(--navy);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.refresh-button:hover {
+    background: var(--navy-light);
+}
+
+#qrcode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    margin: 10px auto;
+}
+
+#qrcode img,
+#qrcode canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.qr-note {
+    font-size: 12px;
+    line-height: 1.5;
+}
