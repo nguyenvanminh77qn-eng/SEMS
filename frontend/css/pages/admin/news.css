@@ -1,0 +1,192 @@
+/* ==========================================
+   CSS TRANG QUẢN LÝ TIN TỨC (Admin)
+   (đi cùng js/pages/admin/news.js, dùng thêm event-shared.css)
+   ========================================== */
+
+.news-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--ev-border);
+}
+
+.news-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+}
+
+.news-tab {
+  border: 0;
+  background: transparent;
+  color: var(--ev-muted);
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.news-tab:hover {
+  color: var(--ev-text);
+  background: #F3F4F6;
+}
+
+.news-tab.active {
+  background: var(--ev-primary-light);
+  color: var(--ev-primary);
+  font-weight: 700;
+}
+
+.news-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #D1D5DB;
+  border-radius: 9px;
+  padding: 0 12px;
+  min-width: 230px;
+  color: var(--ev-muted);
+  background: #F9FAFB;
+}
+
+.news-search:focus-within {
+  border-color: var(--ev-primary);
+  background: #fff;
+}
+
+.news-search input {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--ev-text);
+  padding: 8px 0;
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+}
+
+/* Danh sách bài viết */
+
+.news-list {
+  display: grid;
+  gap: 16px;
+}
+
+.news-card {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--ev-border);
+  border-radius: 12px;
+}
+
+.news-card:hover {
+  border-color: var(--ev-primary);
+  box-shadow: 0 8px 20px rgba(30, 112, 235, 0.12);
+}
+
+.news-card-img {
+  width: 100%;
+  height: 132px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.news-card h3 {
+  margin: 4px 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--ev-text);
+}
+
+.news-card h3:hover {
+  color: var(--ev-primary);
+}
+
+.news-date {
+  font-size: 12px;
+  color: var(--ev-muted);
+}
+
+.news-snippet {
+  margin: 0 0 12px;
+  color: var(--ev-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
+}
+
+.news-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Nút Tạo bài viết mới đồng bộ xanh dương */
+#btnCreateNews {
+  background: var(--ev-primary);
+  border-color: var(--ev-primary);
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(30, 112, 235, 0.22);
+}
+
+#btnCreateNews:hover:not(:disabled) {
+  background: var(--ev-primary-hover);
+  border-color: var(--ev-primary-hover);
+  box-shadow: 0 6px 16px rgba(26, 95, 204, 0.3);
+}
+
+/* Modal tạo / sửa bài viết gọn gàng */
+.news-modal-body {
+  padding-top: 8px;
+}
+
+.news-upload {
+  min-height: 88px;
+  max-height: 132px;
+}
+
+.news-upload img {
+  height: 108px;
+}
+
+.news-body-input {
+  min-height: 130px;
+}
+
+@media (max-width: 700px) {
+  .news-card {
+    grid-template-columns: 1fr;
+  }
+
+  .news-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .news-search {
+    min-width: 0;
+  }
+}

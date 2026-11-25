@@ -1,0 +1,213 @@
+/* ==========================================
+   CSS TRANG TỔNG QUAN (Admin)
+   (đi cùng js/pages/admin/overview.js, dùng thêm event-shared.css)
+   ========================================== */
+
+
+/* Lối tắt nhanh: nút nhỏ giống mục thanh bên */
+
+/* .quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quick-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1px solid var(--ev-border);
+  border-radius: 8px;
+  color: var(--ev-body);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.quick-link:hover {
+  background: var(--ev-primary-light);
+  border-color: var(--ev-primary);
+  color: var(--ev-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(30, 112, 235, 0.18);
+}
+
+.quick-link:active {
+  transform: translateY(-1px);
+} */
+
+/* Thẻ KPI (nếu components.css chưa có thì vẫn đẹp) */
+
+.kpi-grid {
+  margin-bottom: 20px;
+}
+
+.dash-date {
+  background: #F3F4F6;
+  border: 1px solid var(--ev-border);
+  border-radius: 20px;
+  padding: 7px 14px;
+  color: var(--ev-body);
+  font-size: 13px;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.9fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.dash-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.dash-head .btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-head .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(30, 112, 235, 0.25);
+}
+
+.dash-head .btn:active {
+  transform: translateY(-1px);
+}
+
+.dash-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--ev-text);
+}
+
+.dash-count {
+  background: var(--ev-primary-light);
+  color: var(--ev-primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Danh sách sự kiện bên trái */
+
+.dash-event-list {
+  display: grid;
+  gap: 12px;
+}
+
+.dash-event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: var(--ev-soft);
+  border: 1px solid var(--ev-border);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer; /* Đổi từ default sang pointer để cả khối là vùng bấm */
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease,
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+}
+
+/* Di chuột vào cả khung thì khung nảy lên */
+.dash-event:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(30, 112, 235, 0.14);
+  border-color: var(--ev-primary);
+  background-color: #fff;
+}
+
+.dash-event:active {
+  transform: translateY(-1px);
+}
+
+.dash-event h3 a {
+  color: var(--ev-text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Phủ vùng bấm của link ra toàn bộ .dash-event */
+.dash-event h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.dash-event h3 a:hover {
+  color: var(--ev-primary);
+  text-decoration: underline;
+}
+
+/* Khi di chuột vào khung, tên sự kiện cũng đổi màu luôn */
+.dash-event:hover h3 a {
+  color: var(--ev-primary);
+}
+/* Biểu đồ điểm danh */
+
+.dash-chart-head {
+  margin: 26px 0 8px;
+}
+
+.dash-chart-head h3 {
+  font-size: 15px;
+  margin: 0 0 4px;
+  color: var(--ev-text);
+}
+
+.dash-chart-wrap {
+  height: 170px;
+  max-width: 250px;
+  margin: 8px auto;
+}
+
+.dash-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ev-muted);
+}
+
+.dash-legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+
+.legend-present { background: #1E70EB; }
+.legend-absent  { background: #9CA3AF; }
+
+@media (max-width: 1100px) {
+
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .dash-event {
+    grid-template-columns: 90px 1fr;
+  }
+
+  .dash-event .ev-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}

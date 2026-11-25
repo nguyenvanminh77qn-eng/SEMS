@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý sự kiện - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/event-shared.css">
+  <link rel="stylesheet" href="../../css/pages/admin/events.css">
+</head>
+<body data-sems-page="events">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+
+    <div class="ev-page-head">
+      <div>
+        <h1 class="page-title">Quản lý sự kiện</h1>
+        <p class="ev-page-sub">Tạo mới, cập nhật và quản lý trạng thái sự kiện</p>
+      </div>
+      <div class="ev-head-actions">
+        <button type="button" class="btn btn-primary" id="btnCreateEvent"><span data-ic="add"></span>Tạo sự kiện mới</button>
+      </div>
+    </div>
+
+    <!-- Bộ lọc trạng thái + tìm kiếm -->
+    <section class="card ev-toolbar">
+      <div class="ev-tabs" id="eventFilters">
+        <button type="button" class="ev-tab active" data-filter="all">Tổng hợp</button>
+        <button type="button" class="ev-tab" data-filter="Đang diễn ra">Đang diễn ra</button>
+        <button type="button" class="ev-tab" data-filter="Sắp diễn ra">Sắp diễn ra</button>
+        <button type="button" class="ev-tab" data-filter="Đã kết thúc">Đã kết thúc</button>
+        <button type="button" class="ev-tab" data-filter="Đã khóa">Đã khóa</button>
+        <button type="button" class="ev-tab" data-filter="Đã hủy">Đã hủy</button>
+      </div>
+      <label class="ev-search">
+        <span data-ic="search"></span>
+        <input id="eventSearch" type="search" placeholder="Tìm kiếm sự kiện..." autocomplete="off">
+      </label>
+    </section>
+
+    <!-- Danh sách thẻ sự kiện (vẽ bằng events.js) -->
+    <div id="eventGrid" class="ev-grid"></div>
+  </main>
+
+  <!-- MODAL: chi tiết / khóa / hủy / xóa / form sự kiện (nội dung vẽ bằng events.js) -->
+  <div class="modal-overlay" id="modalEvent">
+    <div class="modal-content"></div>
+  </div>
+
+  <script src="../../js/components/modal.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/event-shared.js"></script>
+  <script src="../../js/pages/admin/events.js"></script>
+</body>
+</html>
