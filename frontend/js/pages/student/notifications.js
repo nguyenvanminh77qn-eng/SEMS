@@ -31,7 +31,7 @@
         '<span class="notice-side"><span class="tag tag-public">Công khai</span></span>' +
         '<h2 class="notice-title">' + esc(n.title) + "</h2>" +
         '<p class="notice-sum">' + esc(n.sum) + "</p>" +
-        '<a class="notice-link" href="chi-tiet-notifications.html?id=' + n.id + '" data-id="' + n.id + '">Xem chi tiết →</a>' +
+        '<a class="notice-link" href="notification-detail.html?id=' + n.id + '" data-id="' + n.id + '">Xem chi tiết →</a>' +
         "</article>"
       );
     }).join("");
