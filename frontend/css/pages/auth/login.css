@@ -1,0 +1,6 @@
+/* SEMS – Trang đăng nhập (login.html). Nạp sau common.css. */
+.shell.narrow{max-width:480px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:4px}
+.remember{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.remember input{width:18px;height:18px;accent-color:var(--blue)}
+.forgot{font-size:14px;color:var(--blue);font-weight:600;text-decoration:underline}

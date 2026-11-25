@@ -1,0 +1,73 @@
+/* ==========================================
+   MH 4.19 - Danh sách người đăng ký
+   (đi cùng js/mh-4-19-registration.js)
+   Bảng, tiêu đề, nút Quay lại dùng style chung trong common.css
+   ========================================== */
+
+.sub-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.export-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.export-actions button {
+    padding: 7px 14px;
+    font-size: 13px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.export-actions button:hover:not(:disabled) {
+    background: var(--navy-light);
+}
+
+.export-actions button:disabled {
+    background: #e9ebef;
+    color: #9aa3b1;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.registration-search {
+    margin-bottom: 14px;
+}
+
+.registration-search input {
+    width: 320px;
+    max-width: 100%;
+    height: 34px;
+    padding: 0 13px;
+    border: 1px solid #b4bdd2;
+    border-radius: 20px;
+    outline: none;
+    font-size: 13px;
+}
+
+.registration-search input:focus {
+    border-color: var(--orange);
+    outline: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .sub-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .export-actions {
+        flex-wrap: wrap;
+    }
+}

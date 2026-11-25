@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thông tin cá nhân – SEMS</title>
+<link rel="stylesheet" href="../../css/pages/auth/common.css">
+<link rel="stylesheet" href="../../css/pages/auth/profile.css">
+</head>
+<body class="auth-page">
+<div class="shell profile">
+  <a class="close" href="../../pages/auth/news.html" aria-label="Đóng">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </a>
+
+  <aside class="side">
+    <div class="avatar-wrap">
+      <button type="button" class="avatar-box" id="avatarBtn" aria-label="Đổi ảnh đại diện">
+        <img id="avatarImg" alt="Ảnh đại diện" hidden>
+        <svg id="avatarPh" viewBox="0 0 24 24" width="64" height="64" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>
+        <span class="avatar-hover" aria-hidden="true">Đổi ảnh</span>
+      </button>
+      <span class="cam" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+      <input type="file" id="avatarFile" accept="image/png,image/jpeg,image/webp" hidden>
+    </div>
+    <div class="avatar-actions">
+      <button type="button" class="link" id="avatarChange">Đổi ảnh</button>
+      <button type="button" class="link danger" id="avatarRemove" hidden>Xóa ảnh</button>
+    </div>
+    <p class="err avatar-err" id="avatarErr" role="alert"></p>
+    <p class="who"><b>Nguyễn Thanh Phương</b><span>Sinh viên – 4751050247</span></p>
+    <div class="tabs" role="tablist" aria-label="Thông tin cá nhân" aria-orientation="vertical">
+      <button type="button" role="tab" id="tab-info" aria-controls="panel-info" aria-selected="true">Thông tin cá nhân</button>
+      <button type="button" role="tab" id="tab-pass" aria-controls="panel-pass" aria-selected="false" tabindex="-1">Mật khẩu</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <!-- Thông tin cá nhân -->
+    <section id="panel-info" role="tabpanel" aria-labelledby="tab-info">
+      <h1 class="ptitle">Thông tin cá nhân</h1>
+      <form id="f-info" novalidate>
+        <div class="field">
+          <label for="username">Tên đăng nhập</label>
+          <input id="username" type="text" value="ntphuong1623" readonly>
+        </div>
+        <div class="field">
+          <label for="fullname">Họ và tên</label>
+          <input id="fullname" type="text" value="Nguyễn Thanh Phương" autocomplete="name">
+          <p class="err" id="e-fullname" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="studentid">Mã sinh viên</label>
+          <input id="studentid" type="text" inputmode="numeric" value="4751050247">
+          <p class="err" id="e-studentid" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="class">Lớp</label>
+          <input id="class" type="text" value="CNTT K47B">
+        </div>
+        <div class="field">
+          <label for="faculty">Khoa</label>
+          <input id="faculty" type="text" value="Công nghệ thông tin">
+        </div>
+        <div class="field">
+          <label for="phone">Số điện thoại</label>
+          <input id="phone" type="tel" inputmode="tel" value="0342184884" autocomplete="tel">
+          <p class="err" id="e-phone" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" value="ntphuong1623@gmail.com" autocomplete="email">
+          <p class="err" id="e-email" role="alert"></p>
+        </div>
+        <fieldset class="gender">
+          <legend>Giới tính</legend>
+          <label><input type="radio" name="gender" value="Nam" checked> Nam</label>
+          <label><input type="radio" name="gender" value="Nữ"> Nữ</label>
+          <label><input type="radio" name="gender" value="Khác"> Khác</label>
+        </fieldset>
+        <div class="actions">
+          <button type="button" class="btn-cancel" id="cancel-info">Hủy bỏ</button>
+          <button type="submit" class="submit">Cập nhật</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Cập nhật mật khẩu -->
+    <section id="panel-pass" role="tabpanel" aria-labelledby="tab-pass" hidden>
+      <h1 class="ptitle">Cập nhật mật khẩu</h1>
+      <form id="f-pass" novalidate>
+        <div class="field">
+          <label for="old">Mật khẩu cũ</label>
+          <div class="pw"><input id="old" type="password" placeholder="Nhập mật khẩu cũ" autocomplete="current-password"><button type="button" class="eye" data-target="old" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <p class="err" id="e-old" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="new1">Mật khẩu mới</label>
+          <div class="pw"><input id="new1" type="password" placeholder="Nhập mật khẩu mới" autocomplete="off" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new1" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <p class="err" id="e-new1" role="alert"></p>
+        </div>
+        <div class="field">
+          <label for="new2">Nhập lại mật khẩu mới</label>
+          <div class="pw"><input id="new2" type="password" placeholder="Nhập lại mật khẩu mới" autocomplete="off" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new2" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <p class="err" id="e-new2" role="alert"></p>
+        </div>
+        <div class="actions pass-actions">
+          <button type="button" class="btn-cancel" id="cancel-pass">Hủy bỏ</button>
+          <button type="submit" class="submit">Cập nhật</button>
+        </div>
+      </form>
+    </section>
+
+    <p class="toast" id="toast" role="status" hidden></p>
+  </main>
+</div>
+<script src="../../js/pages/auth/profile.js"></script>
+</body>
+</html>
