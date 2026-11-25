@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tất cả tin tức &amp; thông báo – SEMS</title>
+<link rel="stylesheet" href="../../css/pages/auth/common.css">
+<link rel="stylesheet" href="../../css/pages/auth/news.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="../../pages/auth/home.html"><img class="logo" src="../../images/student/logo.png" alt="Logo Trường Đại học Quy Nhơn" width="46" height="41"><span>TRƯỜNG ĐẠI HỌC QUY NHƠN<small>Hệ thống quản lý sự kiện và hoạt động sinh viên (SEMS)</small></span></a>
+    <nav aria-label="Chính">
+      <a href="../../pages/auth/home.html">Trang chủ</a><a href="../../pages/auth/home.html#su-kien">Sự kiện</a><a href="#">Lịch hoạt động</a><a class="on" href="../../pages/auth/news.html" aria-current="page">Tin tức &amp; Thông báo</a>
+    </nav>
+    <div class="auth">
+      <a class="btn qr" href="#"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v1M14 20h1M18 18v3h3"/></svg>Mã QR điểm danh</a>
+      <details class="user">
+        <summary aria-label="Tài khoản"><span class="avatar"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></span><span class="caret" aria-hidden="true"></span></summary>
+        <div class="menu"><div class="who"><b>Nguyễn Thanh Phương</b><span>Sinh viên – 4751050247</span></div><a href="../../pages/auth/profile.html">Thông tin cá nhân</a><a href="#">Sự kiện đã đăng ký</a><a href="#">Đăng xuất</a></div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<main class="wrap news-page">
+  <h1>Tất cả tin tức &amp; thông báo</h1>
+
+  <form class="search-row" role="search">
+    <input type="search" placeholder="Tìm kiếm tin tức, thông báo, từ khoá..." aria-label="Tìm kiếm tin tức">
+    <button class="btn pri" type="submit">Tìm kiếm</button>
+  </form>
+
+  <div class="filter-row">
+    <div class="filters">
+      <select aria-label="Loại tin tức"><option>Loại tin tức</option><option>Tin tức</option><option>Thông báo</option></select>
+      <select aria-label="Đơn vị đăng"><option>Đơn vị đăng</option><option>Phòng Công tác sinh viên</option><option>Đoàn Thanh niên</option><option>Các khoa</option></select>
+      <select aria-label="Thời gian"><option>Thời gian</option><option>Hôm nay</option><option>7 ngày qua</option><option>30 ngày qua</option></select>
+    </div>
+    <div class="filters">
+      <select aria-label="Sắp xếp"><option>Sắp xếp theo</option><option>Mới nhất</option><option>Cũ nhất</option></select>
+      <button class="btn" type="button">Đặt lại</button>
+    </div>
+  </div>
+
+  <div class="news-grid">
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+      <article class="news-card">
+        <div class="ph">Ảnh tin tức</div>
+        <h3>Tin tức &amp; Thông báo</h3>
+        <p>Ngày đăng</p>
+        <p>Mô tả</p>
+        <a class="btn sm pri" href="#">Xem chi tiết</a>
+      </article>
+  </div>
+
+  <nav class="pager" aria-label="Phân trang">
+    <a href="#" aria-label="Trang trước">&laquo;</a>
+    <a class="cur" href="#" aria-current="page">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#" aria-label="Trang sau">&raquo;</a>
+  </nav>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><img class="logo" src="../../images/student/logo.png" alt="Logo Trường Đại học Quy Nhơn" width="46" height="41"><span>TRƯỜNG ĐẠI HỌC QUY NHƠN<small>Hệ thống quản lý sự kiện và hoạt động sinh viên (SEMS)</small></span></div>
+    <small>© Trường Đại học Quy Nhơn. Bảo lưu mọi quyền.</small>
+  </div>
+</footer>
+<script src="../../js/pages/auth/common.js"></script>
+</body>
+</html>
