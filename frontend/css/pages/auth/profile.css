@@ -39,7 +39,6 @@
 .btn-cancel{border:1.5px solid var(--text);background:var(--white);color:var(--text);font:inherit;font-size:15px;font-weight:600;padding:10px 24px;border-radius:12px;cursor:pointer}
 .btn-cancel:hover{background:var(--field)}
 .pass-actions{margin-top:40px}
-.toast{margin:18px 0 0;max-width:520px;padding:11px 14px;border-radius:10px;font-size:14px;font-weight:600;background:var(--stat);color:var(--navy);border-left:4px solid var(--green)}
 
 @media(max-width:760px){
   .shell.profile{grid-template-columns:1fr;min-height:0}

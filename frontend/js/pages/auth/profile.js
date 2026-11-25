@@ -1,25 +1,39 @@
 (function () {
+  var A = window.SEMSAuth;
   var $ = function (id) { return document.getElementById(id); };
-  var toastTimer = null;
+  var me = A.currentUser();          // trang này có data-guard="auth" nên chắc chắn đã đăng nhập
+  if (!me) return;
+  var busy = false;
 
-  function err(id, msg) {
-    $('e-' + id).textContent = msg || '';
-    $(id).classList.toggle('bad', !!msg);
-    return !msg;
-  }
+  function err(id, msg) { $('e-' + id).textContent = msg || ''; $(id).classList.toggle('bad', !!msg); $(id).setAttribute('aria-invalid', msg ? 'true' : 'false'); return !msg; }
   function clearErrors(form) {
     form.querySelectorAll('.err').forEach(function (p) { p.textContent = ''; });
     form.querySelectorAll('input.bad').forEach(function (i) { i.classList.remove('bad'); });
   }
-  function toast(msg) {
-    var t = $('toast');
-    t.textContent = msg;
-    t.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.hidden = true; }, 3500);
+
+  // ----- Đổ dữ liệu tài khoản đang đăng nhập -----
+  function fillForm() {
+    $('username').value = me.username;
+    $('fullname').value = me.fullname || '';
+    $('studentid').value = me.studentid || '';
+    $('class').value = me.cls || '';
+    $('faculty').value = me.faculty || '';
+    $('phone').value = me.phone || '';
+    $('email').value = me.email || '';
+    var g = document.querySelector('input[name="gender"][value="' + (me.gender || 'Nam') + '"]');
+    if (g) g.checked = true;
+  }
+  function fillSide() {
+    $('whoName').textContent = me.fullname;
+    $('whoSub').textContent = A.roleLabel(me.role) + (me.studentid ? ' – ' + me.studentid : '');
+    showAvatar(me.avatar);
+  }
+  // Sinh viên mới có lớp/khoa/mã SV; admin & organizer không cần các trường này
+  if (me.role !== 'student') {
+    ['studentid', 'class', 'faculty'].forEach(function (id) { $(id).closest('.field').hidden = true; });
   }
 
-  // ----- Chuyển tab: Thông tin cá nhân / Mật khẩu -----
+  // ----- Chuyển tab -----
   var tabs = [$('tab-info'), $('tab-pass')];
   function selectTab(tab) {
     tabs.forEach(function (t) {
@@ -28,7 +42,6 @@
       t.tabIndex = on ? 0 : -1;
       $(t.getAttribute('aria-controls')).hidden = !on;
     });
-    $('toast').hidden = true;
   }
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () { selectTab(t); });
@@ -42,7 +55,8 @@
     });
   });
 
-  // ----- Hiện / ẩn mật khẩu -----
+  A.pwMeter($('new1'));
+
   document.querySelectorAll('.eye').forEach(function (b) {
     b.addEventListener('click', function () {
       var i = $(b.dataset.target), hidden = i.type === 'password';
@@ -51,11 +65,9 @@
     });
   });
 
-  // ----- Đổi ảnh đại diện -----
+  // ----- Ảnh đại diện -----
   var MAX_MB = 2, SIZE = 400;
-  var avatarData = null;   // ảnh đã cắt vuông 400x400 (data URL) — dùng để gửi lên máy chủ
   var fileInput = $('avatarFile');
-
   function avatarError(msg) { $('avatarErr').textContent = msg || ''; }
   function showAvatar(url) {
     var img = $('avatarImg');
@@ -63,6 +75,13 @@
     img.hidden = !url;
     $('avatarPh').style.display = url ? 'none' : '';
     $('avatarRemove').hidden = !url;
+  }
+  function saveAvatar(data, okMsg) {
+    A.api.updateProfile(me.id, { avatar: data }).then(function (res) {
+      if (!res.ok) { A.toast('error', res.message); return; }
+      me = res.user; showAvatar(me.avatar);
+      A.toast('success', okMsg);
+    }).catch(function () { A.toast('error', 'Có lỗi xảy ra, vui lòng thử lại.'); });
   }
   function pickAvatar() { fileInput.click(); }
   $('avatarBtn').addEventListener('click', pickAvatar);
@@ -74,52 +93,49 @@
     if (!f) return;
     if (!/^image\/(png|jpeg|webp)$/.test(f.type)) {
       avatarError('Chỉ nhận ảnh PNG, JPG hoặc WEBP.');
+      A.toast('error', 'Ảnh không hợp lệ: chỉ nhận PNG, JPG hoặc WEBP.');
       fileInput.value = '';
       return;
     }
     if (f.size > MAX_MB * 1024 * 1024) {
       avatarError('Ảnh quá lớn, tối đa ' + MAX_MB + 'MB.');
+      A.toast('error', 'Ảnh quá lớn, tối đa ' + MAX_MB + 'MB.');
       fileInput.value = '';
       return;
     }
     var src = URL.createObjectURL(f), img = new Image();
     img.onload = function () {
-      // Cắt vuông từ giữa ảnh rồi thu về 400x400
       var side = Math.min(img.width, img.height);
       var canvas = document.createElement('canvas');
       canvas.width = canvas.height = SIZE;
       canvas.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, SIZE, SIZE);
-      avatarData = canvas.toDataURL('image/jpeg', 0.9);
       URL.revokeObjectURL(src);
-      showAvatar(avatarData);
-      // TODO: tải avatarData (hoặc file gốc) lên máy chủ.
-      toast('Đã đổi ảnh đại diện.');
+      saveAvatar(canvas.toDataURL('image/jpeg', 0.85), 'Đã đổi ảnh đại diện.');
     };
     img.onerror = function () {
       URL.revokeObjectURL(src);
       avatarError('Không đọc được ảnh này, hãy chọn ảnh khác.');
+      A.toast('error', 'Không đọc được ảnh này, hãy chọn ảnh khác.');
     };
     img.src = src;
-    fileInput.value = '';   // cho phép chọn lại đúng file đó lần sau
+    fileInput.value = '';
   });
-
   $('avatarRemove').addEventListener('click', function () {
-    avatarData = null;
     avatarError('');
-    showAvatar(null);
-    // TODO: yêu cầu máy chủ xóa ảnh đại diện.
-    toast('Đã xóa ảnh đại diện.');
+    saveAvatar(null, 'Đã xóa ảnh đại diện.');
   });
 
   // ----- Thông tin cá nhân -----
   var info = $('f-info');
   $('cancel-info').addEventListener('click', function () {
-    info.reset();            // trả về dữ liệu ban đầu
-    clearErrors(info);
-    $('toast').hidden = true;
+    fillForm(); clearErrors(info);
+    A.toast('info', 'Đã hủy các thay đổi chưa lưu.');
   });
+  ['fullname', 'studentid', 'phone', 'email'].forEach(function (id) { $(id).addEventListener('input', function () { err(id, ''); }); });
+
   info.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (busy) return;
     var sid = $('studentid').value.trim(), ph = $('phone').value.replace(/\s/g, '');
     var ok = [
       err('fullname', $('fullname').value.trim() ? '' : 'Nhập họ và tên'),
@@ -127,29 +143,70 @@
       err('phone', !ph || /^0\d{9}$/.test(ph) ? '' : 'Nhập 10 số, bắt đầu bằng 0'),
       err('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('email').value.trim()) ? '' : 'Email chưa đúng định dạng')
     ].every(Boolean);
-    if (!ok) return;
-    // TODO: gửi thông tin đã sửa tới máy chủ.
-    toast('Đã cập nhật thông tin cá nhân.');
+    if (!ok) { A.toast('error', 'Vui lòng kiểm tra lại các trường bị báo lỗi.'); A.focusFirstError(info); return; }
+
+    var btn = info.querySelector('.submit');
+    var patch = {
+      fullname: $('fullname').value.trim(), email: $('email').value.trim(), phone: ph,
+      gender: (document.querySelector('input[name="gender"]:checked') || {}).value
+    };
+    if (me.role === 'student') { patch.studentid = sid; patch.cls = $('class').value.trim(); patch.faculty = $('faculty').value.trim(); }
+    busy = true;
+    A.setLoading(btn, true, 'Đang lưu...');
+    A.api.updateProfile(me.id, patch).then(function (res) {
+      busy = false;
+      A.setLoading(btn, false);
+      if (!res.ok) {
+        if (res.field) err(res.field, res.message);
+        A.toast('error', 'Cập nhật thất bại. ' + res.message);
+        return;
+      }
+      me = res.user; fillSide();
+      A.toast('success', 'Đã cập nhật thông tin cá nhân.');
+    }).catch(function () {
+      busy = false;
+      A.setLoading(btn, false);
+      A.toast('error', 'Có lỗi xảy ra, vui lòng thử lại.');
+    });
   });
 
-  // ----- Cập nhật mật khẩu -----
+  // ----- Đổi mật khẩu -----
   var pass = $('f-pass');
-  $('cancel-pass').addEventListener('click', function () {
-    pass.reset();
-    clearErrors(pass);
-    $('toast').hidden = true;
-  });
+  $('cancel-pass').addEventListener('click', function () { pass.reset(); clearErrors(pass); var m = pass.querySelector('.pw-meter'); if (m) m.hidden = true; });
+  ['old', 'new1', 'new2'].forEach(function (id) { $(id).addEventListener('input', function () { err(id, ''); }); });
+
   pass.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (busy) return;
     var o = $('old').value, n1 = $('new1').value, n2 = $('new2').value;
     var ok = [
       err('old', o ? '' : 'Nhập mật khẩu cũ'),
-      err('new1', n1.length < 8 ? 'Mật khẩu mới cần ít nhất 8 ký tự' : (n1 === o ? 'Mật khẩu mới phải khác mật khẩu cũ' : '')),
+      err('new1', A.validatePassword(n1) || (n1 === o ? 'Mật khẩu mới phải khác mật khẩu cũ' : '')),
       err('new2', n2 && n2 === n1 ? '' : 'Mật khẩu nhập lại chưa khớp')
     ].every(Boolean);
-    if (!ok) return;
-    // TODO: gửi mật khẩu cũ và mới tới máy chủ.
-    pass.reset();
-    toast('Đã cập nhật mật khẩu.');
+    if (!ok) { A.toast('error', 'Vui lòng kiểm tra lại các trường bị báo lỗi.'); A.focusFirstError(pass); return; }
+
+    var btn = pass.querySelector('.submit');
+    busy = true;
+    A.setLoading(btn, true, 'Đang cập nhật...');
+    A.api.changePassword(me.id, o, n1).then(function (res) {
+      busy = false;
+      A.setLoading(btn, false);
+      if (!res.ok) {
+        if (res.field) err(res.field, res.message);
+        A.toast('error', 'Đổi mật khẩu thất bại. ' + res.message);
+        return;
+      }
+      pass.reset();
+      var m = pass.querySelector('.pw-meter'); if (m) m.hidden = true;
+      A.toast('success', 'Đã cập nhật mật khẩu.');
+    }).catch(function () {
+      busy = false;
+      A.setLoading(btn, false);
+      A.toast('error', 'Có lỗi xảy ra, vui lòng thử lại.');
+    });
   });
+
+  fillForm();
+  fillSide();
 })();
