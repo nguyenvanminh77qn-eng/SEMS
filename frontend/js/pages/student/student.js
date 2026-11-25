@@ -212,38 +212,37 @@ window.QN = (function () {
     menu: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
   };
 
-  /* ---------- Đăng nhập (bản demo, lưu trong localStorage) ---------- */
-  const LOGIN_KEY = "qn_logged_in";
-  // Tài khoản demo để xem thử (khớp với sinh viên mẫu ở trên)
-  const DEMO_ACCOUNT = { mssv: "4751050099", password: "123456" };
+  /* ---------- Đăng nhập: dùng chung phiên đăng nhập với trang auth (../auth/) ---------- */
+  const LOGIN_KEY = "qn_logged_in";          // cờ do auth-core.js bật khi sinh viên đăng nhập
+  const AUTH = "../auth/";
+  const readJSON = (k, store) => { try { return JSON.parse((store || localStorage).getItem(k)); } catch (e) { return null; } };
   function isLoggedIn() { try { return localStorage.getItem(LOGIN_KEY) === "1"; } catch (e) { return false; } }
-  function setLoggedIn(v) { try { v ? localStorage.setItem(LOGIN_KEY, "1") : localStorage.removeItem(LOGIN_KEY); } catch (e) { /* bỏ qua */ } }
 
-  function loginModal() {
-    const wrap = document.createElement("div");
-    wrap.className = "backdrop is-open";
-    wrap.innerHTML =
-      '<form class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" novalidate>' +
-      '<button class="icon-btn modal-close" type="button" aria-label="Đóng" data-close>&times;</button>' +
-      '<h2 id="loginTitle">Đăng nhập</h2>' +
-      '<div class="alert alert-warn" role="note" style="margin-bottom:14px"><strong>Tài khoản demo</strong><br>Mã số sinh viên: <b>' + DEMO_ACCOUNT.mssv + '</b><br>Mật khẩu: <b>' + DEMO_ACCOUNT.password + '</b></div>' +
-      '<div class="field"><label for="lgMssv">Mã số sinh viên</label><input class="input" id="lgMssv" autocomplete="username" inputmode="numeric"></div>' +
-      '<div class="field"><label for="lgPass">Mật khẩu</label><input class="input" id="lgPass" type="password" autocomplete="current-password"></div>' +
-      '<div class="field-error" id="lgErr" role="alert"></div>' +
-      '<button class="btn btn-primary btn-block" type="submit">Đăng nhập</button></form>';
-    document.body.appendChild(wrap);
-    const close = () => wrap.remove();
-    wrap.addEventListener("click", (e) => { if (e.target === wrap || e.target.closest("[data-close]")) close(); });
-    wrap.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
-    wrap.querySelector("form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const u = wrap.querySelector("#lgMssv").value.trim(), pw = wrap.querySelector("#lgPass").value;
-      if (!u || !pw) { wrap.querySelector("#lgErr").textContent = "Vui lòng nhập mã số sinh viên và mật khẩu."; return; }
-      if (u !== DEMO_ACCOUNT.mssv || pw !== DEMO_ACCOUNT.password) { wrap.querySelector("#lgErr").textContent = "Mã số sinh viên hoặc mật khẩu không đúng."; return; }
-      setLoggedIn(true);
-      location.reload();
-    });
-    wrap.querySelector("#lgMssv").focus();
+  // Người dùng hiện tại (tên, MSSV, ảnh đại diện) lấy từ kho tài khoản của trang auth
+  function currentUser() {
+    if (!isLoggedIn()) return null;
+    const sess = readJSON("sems_session", sessionStorage) || readJSON("sems_session");
+    const list = readJSON("sems_users") || [];
+    const u = sess ? list.find((x) => x.id === sess.id) : null;
+    if (u && u.role === "student") return { name: u.fullname, mssv: u.studentid, avatar: u.avatar };
+    const s = window.QN.student;
+    return { name: s.name, mssv: s.mssv, avatar: null };
+  }
+
+  // Chuyển sang trang đăng nhập của auth, đăng nhập xong quay lại đúng trang sinh viên đang xem
+  function goLogin() {
+    const page = location.pathname.split("/").pop() + location.search + location.hash;
+    try { if (/^[\w-]+\.html(\?[\w=&%.-]*)?(#[\w-]*)?$/.test(page)) sessionStorage.setItem("sems_next", JSON.stringify("../student/" + page)); } catch (e) { /* bỏ qua */ }
+    location.href = AUTH + "login.html";
+  }
+
+  function logout() {
+    try {
+      localStorage.removeItem("sems_session"); sessionStorage.removeItem("sems_session");
+      localStorage.removeItem(LOGIN_KEY);
+      sessionStorage.setItem("sems_flash", JSON.stringify({ type: "success", message: "Bạn đã đăng xuất." }));
+    } catch (e) { /* bỏ qua */ }
+    location.href = AUTH + "home.html";
   }
 
   // Khối thay thế cho nội dung cá nhân khi chưa đăng nhập
@@ -254,22 +253,24 @@ window.QN = (function () {
     );
   }
 
+  const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
   function headerHTML(active) {
     const eventsActive = ["events", "my-events", "register"].indexOf(active) > -1;
     const a = (key, href, text) =>
       '<a class="nav-link' + (active === key ? " is-active" : "") + '" href="' + href + '"' + (active === key ? ' aria-current="page"' : "") + ">" + text + "</a>";
     const m = (key, href, text) =>
       '<a href="' + href + '"' + (active === key ? ' class="is-active" aria-current="page"' : "") + ">" + text + "</a>";
-    const s = window.QN.student;
+    const u = currentUser();
 
     return (
       '<header class="site-header" id="siteHeader"><div class="container nav-inner">' +
-      '<a class="brand" href="notifications.html" aria-label="Đại học Quy Nhơn - Cổng thông tin sinh viên">' +
+      '<a class="brand" href="../auth/home.html" aria-label="Đại học Quy Nhơn - Cổng thông tin sinh viên">' +
       '<img class="brand-mark" src="../../images/student/logo.png" width="46" height="46" alt="">' +
       '<span><span class="brand-name">Đại học Quy Nhơn</span><span class="brand-sub">Cổng thông tin sinh viên</span></span></a>' +
       '<button class="nav-toggle" id="navToggle" aria-label="Mở menu" aria-expanded="false" aria-controls="mainNav">' + ICON.menu + "</button>" +
       '<nav class="nav" id="mainNav" aria-label="Điều hướng chính">' +
-      a("home", "home.html", "Trang chủ") +
+      a("home", "../auth/home.html", "Trang chủ") +
       '<div class="has-menu" id="eventsMenu">' +
       '<button class="nav-trigger' + (eventsActive ? " is-active" : "") + '" type="button" aria-haspopup="true" aria-expanded="false">Sự kiện ' + ICON.chevron + "</button>" +
       '<div class="menu" role="menu">' +
@@ -282,9 +283,12 @@ window.QN = (function () {
       "</nav>" +
       '<div class="nav-actions">' +
       '<a class="btn-qr' + (active === "qr" ? " is-active" : "") + '" href="qr-checkin.html">' + ICON.qr + "Quét QR điểm danh</a>" +
-      (isLoggedIn()
-        ? '<div class="has-menu" id="accountMenu"><button class="account" type="button" aria-haspopup="true" aria-expanded="false" title="MSSV ' + s.mssv + '"><span class="avatar">' + ICON.user + "</span>" + s.name + ICON.chevron + '</button><div class="menu menu-right" role="menu"><button type="button" id="logoutBtn">Đăng xuất</button></div></div>'
-        : '<button class="btn btn-primary btn-sm" type="button" id="loginBtn" data-login>Đăng nhập</button>') +
+      (u
+        ? '<div class="has-menu" id="accountMenu"><button class="account" type="button" aria-haspopup="true" aria-expanded="false"' + (u.mssv ? ' title="MSSV ' + esc(u.mssv) + '"' : "") + '><span class="avatar">' + (u.avatar ? '<img src="' + esc(u.avatar) + '" alt="">' : ICON.user) + "</span>" + esc(u.name) + ICON.chevron + '</button>' +
+          '<div class="menu menu-right" role="menu"><div class="menu-who"><b>' + esc(u.name) + "</b><span>Sinh viên" + (u.mssv ? " – " + esc(u.mssv) : "") + '</span></div>' +
+          '<a href="../auth/profile.html" role="menuitem">Xem thông tin</a>' +
+          '<button type="button" role="menuitem" id="logoutBtn" data-logout>Đăng xuất</button></div></div>'
+        : '<a class="hbtn" href="../auth/register.html">Đăng ký</a><a class="hbtn pri" href="../auth/login.html" id="loginBtn" data-login>Đăng nhập</a>') +
       "</div></div></header>"
     );
   }
@@ -305,7 +309,7 @@ window.QN = (function () {
   function goBack(e) {
     e.preventDefault();
     if (history.length > 1) history.back();
-    else location.href = "notifications.html";
+    else location.href = "../auth/home.html";
   }
 
   function init() {
@@ -314,9 +318,9 @@ window.QN = (function () {
     if (slot) slot.outerHTML = headerHTML(active);
 
     const header = document.getElementById("siteHeader");
-    document.addEventListener("click", (e) => { if (e.target.closest("[data-login]")) loginModal(); });
+    document.addEventListener("click", (e) => { const b = e.target.closest("[data-login]"); if (b) { e.preventDefault(); goLogin(); } });
     const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) logoutBtn.addEventListener("click", () => { setLoggedIn(false); location.reload(); });
+    if (logoutBtn) logoutBtn.addEventListener("click", logout);
     const accMenu = document.getElementById("accountMenu");
     if (accMenu) {
       const t = accMenu.querySelector(".account");
@@ -357,7 +361,7 @@ window.QN = (function () {
     });
   }
 
-  window.QNUI = { toast, ICON, isLoggedIn, openLogin: loginModal, gate: gateHTML };
+  window.QNUI = { toast, ICON, isLoggedIn, openLogin: goLogin, gate: gateHTML };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 })();
