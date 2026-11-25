@@ -5,10 +5,14 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Đăng nhập – SEMS</title>
+<link rel="icon" type="image/png" href="../../images/student/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/pages/auth/common.css">
 <link rel="stylesheet" href="../../css/pages/auth/login.css">
 </head>
-<body class="auth-page">
+<body class="auth-page bg-photo" data-guard="guest">
 <div class="shell narrow">
   <main class="main">
     <div class="top">
@@ -21,12 +25,13 @@
     <form id="f" novalidate>
       <div class="field">
         <label for="username">Tên đăng nhập</label>
-        <input id="username" type="text" placeholder="Nhập tên đăng nhập" autocomplete="username">
+        <input id="username" type="text" placeholder="Tên đăng nhập, email hoặc mã sinh viên" autocomplete="username" autofocus>
         <p class="err" id="e-username" role="alert"></p>
       </div>
       <div class="field">
         <label for="password">Mật khẩu</label>
         <div class="pw"><input id="password" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password"><button type="button" class="eye" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <p class="hint caps" id="caps" hidden>Caps Lock đang bật</p>
         <p class="err" id="e-password" role="alert"></p>
       </div>
       <div class="row">
@@ -38,6 +43,7 @@
     <p class="alt">Bạn chưa có tài khoản? <a href="../../pages/auth/register.html">Đăng ký</a></p>
   </main>
 </div>
+<script src="../../js/pages/auth/auth-core.js"></script>
 <script src="../../js/pages/auth/login.js"></script>
 </body>
 </html>

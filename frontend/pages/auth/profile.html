@@ -5,12 +5,16 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Thông tin cá nhân – SEMS</title>
+<link rel="icon" type="image/png" href="../../images/student/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/pages/auth/common.css">
 <link rel="stylesheet" href="../../css/pages/auth/profile.css">
 </head>
-<body class="auth-page">
+<body class="auth-page" data-guard="auth">
 <div class="shell profile">
-  <a class="close" href="../../pages/auth/news.html" aria-label="Đóng">
+  <a class="close" href="../../pages/auth/home.html" aria-label="Đóng">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
   </a>
 
@@ -29,7 +33,7 @@
       <button type="button" class="link danger" id="avatarRemove" hidden>Xóa ảnh</button>
     </div>
     <p class="err avatar-err" id="avatarErr" role="alert"></p>
-    <p class="who"><b>Nguyễn Thanh Phương</b><span>Sinh viên – 4751050247</span></p>
+    <p class="who"><b id="whoName"></b><span id="whoSub"></span></p>
     <div class="tabs" role="tablist" aria-label="Thông tin cá nhân" aria-orientation="vertical">
       <button type="button" role="tab" id="tab-info" aria-controls="panel-info" aria-selected="true">Thông tin cá nhân</button>
       <button type="button" role="tab" id="tab-pass" aria-controls="panel-pass" aria-selected="false" tabindex="-1">Mật khẩu</button>
@@ -43,34 +47,34 @@
       <form id="f-info" novalidate>
         <div class="field">
           <label for="username">Tên đăng nhập</label>
-          <input id="username" type="text" value="ntphuong1623" readonly>
+          <input id="username" type="text" readonly>
         </div>
         <div class="field">
           <label for="fullname">Họ và tên</label>
-          <input id="fullname" type="text" value="Nguyễn Thanh Phương" autocomplete="name">
+          <input id="fullname" type="text" autocomplete="name">
           <p class="err" id="e-fullname" role="alert"></p>
         </div>
         <div class="field">
           <label for="studentid">Mã sinh viên</label>
-          <input id="studentid" type="text" inputmode="numeric" value="4751050247">
+          <input id="studentid" type="text" inputmode="numeric">
           <p class="err" id="e-studentid" role="alert"></p>
         </div>
         <div class="field">
           <label for="class">Lớp</label>
-          <input id="class" type="text" value="CNTT K47B">
+          <input id="class" type="text">
         </div>
         <div class="field">
           <label for="faculty">Khoa</label>
-          <input id="faculty" type="text" value="Công nghệ thông tin">
+          <input id="faculty" type="text">
         </div>
         <div class="field">
           <label for="phone">Số điện thoại</label>
-          <input id="phone" type="tel" inputmode="tel" value="0342184884" autocomplete="tel">
+          <input id="phone" type="tel" inputmode="tel" autocomplete="tel">
           <p class="err" id="e-phone" role="alert"></p>
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" type="email" value="ntphuong1623@gmail.com" autocomplete="email">
+          <input id="email" type="email" autocomplete="email">
           <p class="err" id="e-email" role="alert"></p>
         </div>
         <fieldset class="gender">
@@ -97,12 +101,12 @@
         </div>
         <div class="field">
           <label for="new1">Mật khẩu mới</label>
-          <div class="pw"><input id="new1" type="password" placeholder="Nhập mật khẩu mới" autocomplete="off" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new1" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <div class="pw"><input id="new1" type="password" placeholder="Nhập mật khẩu mới" autocomplete="new-password" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new1" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
           <p class="err" id="e-new1" role="alert"></p>
         </div>
         <div class="field">
           <label for="new2">Nhập lại mật khẩu mới</label>
-          <div class="pw"><input id="new2" type="password" placeholder="Nhập lại mật khẩu mới" autocomplete="off" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new2" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+          <div class="pw"><input id="new2" type="password" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="new2" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
           <p class="err" id="e-new2" role="alert"></p>
         </div>
         <div class="actions pass-actions">
@@ -112,9 +116,9 @@
       </form>
     </section>
 
-    <p class="toast" id="toast" role="status" hidden></p>
   </main>
 </div>
+<script src="../../js/pages/auth/auth-core.js"></script>
 <script src="../../js/pages/auth/profile.js"></script>
 </body>
 </html>

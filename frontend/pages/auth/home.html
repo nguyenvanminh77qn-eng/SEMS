@@ -5,19 +5,16 @@
 <meta name="color-scheme" content="light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SEMS – Hệ thống quản lý sự kiện và hoạt động sinh viên Trường Đại học Quy Nhơn</title>
+<meta name="description" content="SEMS – nền tảng quản lý sự kiện và hoạt động sinh viên Trường Đại học Quy Nhơn: xem sự kiện, đăng ký tham gia, điểm danh QR.">
+<link rel="icon" type="image/png" href="../../images/student/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/pages/auth/common.css">
 <link rel="stylesheet" href="../../css/pages/auth/home.css">
 </head>
-<body>
-<header>
-  <div class="wrap">
-    <a class="brand" href="#"><img class="logo" src="../../images/student/logo.png" alt="Logo Trường Đại học Quy Nhơn" width="46" height="41"><span>TRƯỜNG ĐẠI HỌC QUY NHƠN<small>Hệ thống quản lý sự kiện và hoạt động sinh viên (SEMS)</small></span></a>
-    <nav aria-label="Chính">
-      <a class="on" href="#">Trang chủ</a><a href="#su-kien">Sự kiện</a><a href="#lich-hoat-dong">Lịch hoạt động</a><a href="../../pages/auth/news.html">Tin tức &amp; Thông báo</a>
-    </nav>
-    <div class="auth"><a class="btn sm" href="../../pages/auth/register.html">Đăng ký</a><a class="btn sm pri" href="../../pages/auth/login.html">Đăng nhập</a></div>
-  </div>
-</header>
+<body data-nav="home">
+<div id="siteHeaderSlot"></div>
 
 <main>
 <div class="hero">
@@ -25,53 +22,33 @@
     <div>
       <h1>Kết nối sinh viên với những sự kiện ý nghĩa</h1>
       <p>SEMS – Nền tảng quản lý sự kiện và hoạt động sinh viên Trường Đại học Quy Nhơn.</p>
-      <form class="search" role="search">
-        <input type="search" placeholder="Tìm kiếm sự kiện, hoạt động tại trường..." aria-label="Tìm kiếm sự kiện">
+      <form class="search" role="search" id="heroSearch">
+        <input id="q" type="search" placeholder="Tìm kiếm sự kiện, hoạt động tại trường..." aria-label="Tìm kiếm sự kiện" autocomplete="off">
         <button class="btn pri" type="submit">Tìm kiếm</button>
       </form>
       <div class="tags">
-        <select aria-label="Loại sự kiện"><option>Tất cả sự kiện</option><option>Sự kiện của khoa</option><option>Sự kiện toàn trường</option><option>Sự kiện câu lạc bộ</option></select>
-        <select aria-label="Thời gian"><option>Sự kiện sắp diễn ra</option><option>Đang diễn ra</option><option>Đã kết thúc</option><option>Tất cả thời gian</option></select>
-        <select aria-label="Lĩnh vực"><option>Học thuật</option><option>Văn nghệ</option><option>Thể thao</option><option>Tình nguyện</option><option>Tất cả lĩnh vực</option></select>
+        <select id="fScope" aria-label="Loại sự kiện"><option value="">Tất cả sự kiện</option><option value="khoa">Sự kiện của khoa</option><option value="truong">Sự kiện toàn trường</option><option value="clb">Sự kiện câu lạc bộ</option></select>
+        <select id="fTime" aria-label="Thời gian"><option value="upcoming">Sự kiện sắp diễn ra</option><option value="live">Đang diễn ra</option><option value="ended">Đã kết thúc</option><option value="">Tất cả thời gian</option></select>
+        <select id="fField" aria-label="Lĩnh vực"><option value="">Tất cả lĩnh vực</option><option value="hoc-thuat">Học thuật</option><option value="van-hoa">Văn nghệ</option><option value="the-thao">Thể thao</option><option value="tinh-nguyen">Tình nguyện</option></select>
       </div>
     </div>
-    <div class="ph" role="img" aria-label="Hình ảnh minh hoạ">Hình ảnh banner</div>
+    <aside class="spot" id="spotlight" aria-label="Sự kiện tiếp theo"></aside>
   </div>
 </div>
 
-<section>
-  <div class="wrap">
-    <h2 class="center">Dành cho bạn</h2>
-    <div class="roles">
-      <div class="role"><div class="ic" aria-hidden="true">👤</div><h3>Quản trị viên (Admin)</h3><p>Quản lý hệ thống, người dùng và phê duyệt sự kiện.</p><a class="btn pri sm" href="#">Truy cập</a></div>
-      <div class="role"><div class="ic" aria-hidden="true">🗂️</div><h3>Người tổ chức (Organizer)</h3><p>Tạo, tổ chức sự kiện và quản lý đăng ký của người tham gia.</p><a class="btn pri sm" href="#">Truy cập</a></div>
-      <div class="role"><div class="ic" aria-hidden="true">🎓</div><h3>Sinh viên (Student)</h3><p>Tìm kiếm sự kiện, đăng ký tham gia và xem lịch sử hoạt động.</p><a class="btn pri sm" href="#">Truy cập</a></div>
-    </div>
-  </div>
-</section>
-
 <section id="su-kien" class="tight">
   <div class="wrap">
-    <h2>Sự kiện nổi bật <a href="#">Xem tất cả</a></h2>
-    <div class="events">
-      <article class="event"><div class="ph">Ảnh sự kiện</div><h3>Tên sự kiện</h3><p>Ngày tổ chức</p><p>Địa điểm</p><p>Trạng thái</p><div class="act"><a class="btn sm" href="#">Xem chi tiết</a><a class="btn sm pri" href="#">Đăng ký ngay</a></div></article>
-      <article class="event"><div class="ph">Ảnh sự kiện</div><h3>Tên sự kiện</h3><p>Ngày tổ chức</p><p>Địa điểm</p><p>Trạng thái</p><div class="act"><a class="btn sm" href="#">Xem chi tiết</a><a class="btn sm pri" href="#">Đăng ký ngay</a></div></article>
-      <article class="event"><div class="ph">Ảnh sự kiện</div><h3>Tên sự kiện</h3><p>Ngày tổ chức</p><p>Địa điểm</p><p>Trạng thái</p><div class="act"><a class="btn sm" href="#">Xem chi tiết</a><a class="btn sm pri" href="#">Đăng ký ngay</a></div></article>
-      <article class="event"><div class="ph">Ảnh sự kiện</div><h3>Tên sự kiện</h3><p>Ngày tổ chức</p><p>Địa điểm</p><p>Trạng thái</p><div class="act"><a class="btn sm" href="#">Xem chi tiết</a><a class="btn sm pri" href="#">Đăng ký ngay</a></div></article>
-    </div>
+    <h2>Sự kiện nổi bật <a href="../student/event-list.html" data-auth data-student data-auth-msg="Vui lòng đăng nhập để xem tất cả sự kiện.">Xem tất cả</a></h2>
+    <p class="count-note" id="evCount" aria-live="polite"></p>
+    <div class="events" id="events"></div>
   </div>
 </section>
 
 <section id="lich-hoat-dong" class="none"></section>
 <section id="tin-tuc" class="tight">
   <div class="wrap">
-    <h2>Tin tức &amp; Thông báo <a href="#">Xem tất cả</a></h2>
-    <div class="news">
-      <article class="item"><div class="ph">Ảnh</div><div><h3>Tin tức &amp; Thông báo</h3><p>Ngày đăng</p><a href="#">Xem chi tiết</a></div></article>
-      <article class="item"><div class="ph">Ảnh</div><div><h3>Tin tức &amp; Thông báo</h3><p>Ngày đăng</p><a href="#">Xem chi tiết</a></div></article>
-      <article class="item"><div class="ph">Ảnh</div><div><h3>Tin tức &amp; Thông báo</h3><p>Ngày đăng</p><a href="#">Xem chi tiết</a></div></article>
-      <article class="item"><div class="ph">Ảnh</div><div><h3>Tin tức &amp; Thông báo</h3><p>Ngày đăng</p><a href="#">Xem chi tiết</a></div></article>
-    </div>
+    <h2>Tin tức &amp; Thông báo <a href="../student/notifications.html" data-auth data-student data-auth-msg="Vui lòng đăng nhập để xem tất cả tin tức và thông báo.">Xem tất cả</a></h2>
+    <div class="news" id="homeNews"></div>
   </div>
 </section>
 
@@ -79,10 +56,10 @@
   <div class="wrap">
     <h2 class="center">Thống kê tổng quan</h2>
     <div class="stats">
-      <div class="stat"><b>120+</b><span>Số lượng sự kiện</span></div>
-      <div class="stat"><b>5000+</b><span>Số lượng sinh viên tham gia</span></div>
-      <div class="stat"><b>30+</b><span>Số lượng đơn vị tổ chức</span></div>
-      <div class="stat"><b>10+</b><span>Số loại hình sự kiện</span></div>
+      <div class="stat"><b data-count="120" data-suffix="+">120+</b><span>Số lượng sự kiện</span></div>
+      <div class="stat"><b data-count="5000" data-suffix="+">5000+</b><span>Số lượng sinh viên tham gia</span></div>
+      <div class="stat"><b data-count="30" data-suffix="+">30+</b><span>Số lượng đơn vị tổ chức</span></div>
+      <div class="stat"><b data-count="10" data-suffix="+">10+</b><span>Số loại hình sự kiện</span></div>
     </div>
   </div>
 </section>
@@ -91,8 +68,12 @@
 <footer>
   <div class="wrap">
     <div class="brand"><img class="logo" src="../../images/student/logo.png" alt="Logo Trường Đại học Quy Nhơn" width="46" height="41"><span>TRƯỜNG ĐẠI HỌC QUY NHƠN<small>Hệ thống quản lý sự kiện và hoạt động sinh viên (SEMS)</small></span></div>
+    <small>© Trường Đại học Quy Nhơn. Bảo lưu mọi quyền.</small>
   </div>
 </footer>
+<script src="../../js/pages/auth/auth-core.js"></script>
+<script src="../../js/pages/auth/sample-data.js"></script>
 <script src="../../js/pages/auth/common.js"></script>
+<script src="../../js/pages/auth/home.js"></script>
 </body>
 </html>
