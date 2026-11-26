@@ -196,6 +196,7 @@ window.QN = (function () {
   // => Khi làm thêm trang mới, chỉ cần thêm tên file vào đây.
   const BUILT = [
     "notifications.html",
+    "notification-detail.html",
     "activity-calendar.html",
     "my-events.html",
     "qr-checkin.html",
