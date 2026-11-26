@@ -12,7 +12,7 @@
   function err(id, msg) { $('e-' + id).textContent = msg || ''; $(id).classList.toggle('bad', !!msg); $(id).setAttribute('aria-invalid', msg ? 'true' : 'false'); return !msg; }
   var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); };
 
-  ['username', 'email', 'otp', 'password', 'password2'].forEach(function (id) {
+  ['email', 'otp', 'password', 'password2'].forEach(function (id) {
     $(id).addEventListener('input', function () { err(id, ''); });
   });
 
@@ -54,15 +54,11 @@
   $('sendOtp').addEventListener('click', function () {
     if (busy) return;
     var btn = this, hint = $('otpHint');
-    var ok = [
-      err('username', $('username').value.trim() ? '' : 'Vui lòng nhập tên đăng nhập'),
-      err('email', emailOk($('email').value.trim()) ? '' : 'Email chưa đúng định dạng')
-    ].every(Boolean);
-    if (!ok) { A.toast('error', 'Hãy nhập tên đăng nhập và email hợp lệ trước khi gửi OTP.'); A.focusFirstError($('f1')); return; }
+    if (!err('email', emailOk($('email').value.trim()) ? '' : 'Email chưa đúng định dạng')) { A.toast('error', 'Hãy nhập email hợp lệ trước khi gửi OTP.'); A.focusFirstError($('f1')); return; }
 
     busy = true;
     A.setLoading(btn, true, 'Đang gửi...');
-    A.api.sendOtp($('username').value.trim(), $('email').value.trim()).then(function (res) {
+    A.api.sendOtp($('email').value.trim()).then(function (res) {
       busy = false;
       A.setLoading(btn, false);
       if (!res.ok) {
@@ -90,10 +86,9 @@
   $('f1').addEventListener('submit', function (e) {
     e.preventDefault();
     if (busy) return;
-    var u = $('username').value.trim(), code = $('otp').value.trim();
+    var u = $('email').value.trim(), code = $('otp').value.trim();
     var ok = [
-      err('username', u ? '' : 'Vui lòng nhập tên đăng nhập'),
-      err('email', emailOk($('email').value.trim()) ? '' : 'Email chưa đúng định dạng'),
+      err('email', emailOk(u) ? '' : 'Email chưa đúng định dạng'),
       err('otp', /^\d{6}$/.test(code) ? '' : 'Mã OTP gồm 6 chữ số')
     ].every(Boolean);
     if (!ok) { A.toast('error', 'Vui lòng kiểm tra lại thông tin.'); A.focusFirstError($('f1')); return; }
@@ -105,7 +100,7 @@
       busy = false;
       A.setLoading(btn, false);
       if (!res.ok) { err('otp', res.message); A.toast('error', 'Xác nhận thất bại. ' + res.message); return; }
-      ctx = { username: u, code: code };
+      ctx = { email: u, code: code };
       A.toast('success', 'Xác minh thành công. Hãy tạo mật khẩu mới.');
       show('step2');
       $('password').focus();
@@ -130,7 +125,7 @@
     var btn = $('f2').querySelector('.submit');
     busy = true;
     A.setLoading(btn, true, 'Đang cập nhật...');
-    A.api.resetPassword(ctx.username, ctx.code, p).then(function (res) {
+    A.api.resetPassword(ctx.email, ctx.code, p).then(function (res) {
       busy = false;
       A.setLoading(btn, false);
       if (!res.ok) {

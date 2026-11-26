@@ -13,7 +13,6 @@
 
   // ----- Đổ dữ liệu tài khoản đang đăng nhập -----
   function fillForm() {
-    $('username').value = me.username;
     $('fullname').value = me.fullname || '';
     $('studentid').value = me.studentid || '';
     $('class').value = me.cls || '';
