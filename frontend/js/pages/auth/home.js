@@ -9,36 +9,34 @@
   var ICON_PIN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
 
   function eventHref(ev) { return '../student/event-detail.html?id=' + ev.id; }
-  function registerHref(ev) { return '../student/event-register.html?id=' + ev.id; }
 
   /* ---------- Sự kiện nổi bật ---------- */
   function eventCard(ev) {
-    var st = D.status(ev), d = D.parse(ev.date), ended = D.phase(ev) === 'ended';
-    var seats = ended ? '' : '<span class="seats">' + (ev.seats <= 15 ? 'Chỉ còn ' : 'Còn ') + ev.seats + ' chỗ</span>';
-    var reg = ended
-      ? '<span class="btn sm pri is-disabled" aria-disabled="true">Đã kết thúc</span>'
-      : '<a class="btn sm pri" ' + U.gate(registerHref(ev), 'Vui lòng đăng nhập để đăng ký tham gia sự kiện.') + '>Đăng ký ngay</a>';
+    var st = D.status(ev), d = D.parse(ev.date), img = D.art(ev);
     return '<article class="event">' +
-      '<div class="thumb t-' + ev.type + '" role="img" aria-label="Sự kiện ' + esc(D.TYPES[ev.type].toLowerCase()) + '">' +
+      '<div class="thumb t-' + ev.type + (img ? ' has-img' : '') + '" role="img" aria-label="Sự kiện ' + esc(D.TYPES[ev.type].toLowerCase()) + '">' +
+        (img ? '<img src="' + esc(img) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
         '<span class="chip">' + esc(D.TYPES[ev.type]) + '</span>' +
         '<span class="dbadge"><b>' + d.getDate() + '</b>Thg ' + (d.getMonth() + 1) + '</span>' +
       '</div>' +
       '<h3>' + esc(ev.title) + '</h3>' +
       '<p class="row">' + ICON_CAL + '<span>' + esc(D.weekday(ev.date)) + ', ' + D.fmt(ev.date) + ' · ' + esc(ev.time) + '</span></p>' +
       '<p class="row">' + ICON_PIN + '<span>' + esc(ev.place) + '</span></p>' +
-      '<p class="row st"><span class="badge ' + st.cls + '">' + esc(st.text) + '</span>' + seats + '</p>' +
-      '<div class="act"><a class="btn sm" ' + U.gate(eventHref(ev), 'Vui lòng đăng nhập để xem chi tiết sự kiện.') + '>Xem chi tiết</a>' + reg + '</div>' +
+      (ev.faculty ? '<p class="row fac"><span>' + esc(ev.faculty) + '</span></p>' : '') +
+      '<p class="row st"><span class="badge ' + st.cls + '">' + esc(st.text) + '</span></p>' +
+      '<div class="act"><a class="btn sm" href="' + esc(eventHref(ev)) + '">Xem chi tiết</a></div>' +
     '</article>';
   }
 
   function matches(ev, f) {
     if (f.scope && ev.scope !== f.scope) return false;
+    if (f.scope === 'khoa' && f.faculty && ev.faculty !== f.faculty) return false;
     if (f.field && ev.type !== f.field) return false;
     var ph = D.phase(ev);
     if (f.time === 'upcoming' && ph === 'ended') return false;   // "sắp diễn ra" gồm cả sự kiện hôm nay
     if (f.time === 'live' && ph !== 'live') return false;
     if (f.time === 'ended' && ph !== 'ended') return false;
-    if (f.q && U.fold([ev.title, ev.place, D.TYPES[ev.type], D.SCOPES[ev.scope]].join(' ')).indexOf(f.q) === -1) return false;
+    if (f.q && U.fold([ev.title, ev.place, D.TYPES[ev.type], D.SCOPES[ev.scope], ev.faculty || ''].join(' ')).indexOf(f.q) === -1) return false;
     return true;
   }
   // Sự kiện chưa qua xếp theo ngày gần nhất, sự kiện đã qua xếp mới nhất trước
@@ -50,7 +48,7 @@
   }
 
   function renderEvents() {
-    var f = { scope: $('fScope').value, time: $('fTime').value, field: $('fField').value, q: U.fold($('q').value) };
+    var f = { scope: $('fScope').value, faculty: $('fFaculty').value, time: $('fTime').value, field: $('fField').value, q: U.fold($('q').value) };
     var list = D.events.filter(function (ev) { return matches(ev, f); }).sort(order);
     $('events').innerHTML = list.length
       ? list.slice(0, MAX_EVENTS).map(eventCard).join('')
@@ -58,7 +56,14 @@
     $('evCount').textContent = list.length ? 'Hiển thị ' + Math.min(list.length, MAX_EVENTS) + '/' + list.length + ' sự kiện phù hợp' : '';
   }
 
-  ['fScope', 'fTime', 'fField'].forEach(function (id) { $(id).addEventListener('change', renderEvents); });
+  // Chọn "Sự kiện của khoa" thì hiện thêm ô chọn khoa cụ thể
+  $('fFaculty').innerHTML = '<option value="">Tất cả các khoa</option>' + D.FACULTIES.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
+  $('fScope').addEventListener('change', function () {
+    var isKhoa = $('fScope').value === 'khoa';
+    $('fFaculty').hidden = !isKhoa;
+    if (!isKhoa) $('fFaculty').value = '';
+  });
+  ['fScope', 'fFaculty', 'fTime', 'fField'].forEach(function (id) { $(id).addEventListener('change', renderEvents); });
   $('q').addEventListener('input', renderEvents);
   $('heroSearch').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -78,7 +83,7 @@
       '<p class="row">' + ICON_CAL + '<span>' + esc(D.weekday(next.date)) + ', ' + D.fmt(next.date) + ' · ' + esc(next.time) + '</span></p>' +
       '<p class="row">' + ICON_PIN + '<span>' + esc(next.place) + '</span></p>' +
       '<p class="spot-meta"><span class="count">' + esc(D.countdown(next)) + '</span><span class="badge ' + st.cls + '">' + esc(st.text) + '</span></p>' +
-      '<a class="btn sm" ' + U.gate(eventHref(next), 'Vui lòng đăng nhập để xem chi tiết sự kiện.') + '>Xem chi tiết</a>';
+      '<a class="btn sm" href="' + esc(eventHref(next)) + '">Xem chi tiết</a>';
   }
 
   /* ---------- Tin tức & thông báo mới ---------- */
@@ -88,7 +93,7 @@
       return '<article class="item">' +
         '<div class="nthumb ' + U.catClass(n.cat) + '" aria-hidden="true">' + esc(n.cat) + '</div>' +
         '<div><h3>' + esc(n.title) + '</h3><p>' + D.fmt(n.date) + ' · ' + esc(n.unit) + '</p>' +
-        '<a ' + U.gate('../student/notifications.html', 'Vui lòng đăng nhập để xem chi tiết tin tức.') + '>Xem chi tiết</a></div>' +
+        '<a href="../student/notifications.html">Xem chi tiết</a></div>' +
       '</article>';
     }).join('');
   }

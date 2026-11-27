@@ -28,6 +28,7 @@
       </form>
       <div class="tags">
         <select id="fScope" aria-label="Loại sự kiện"><option value="">Tất cả sự kiện</option><option value="khoa">Sự kiện của khoa</option><option value="truong">Sự kiện toàn trường</option><option value="clb">Sự kiện câu lạc bộ</option></select>
+        <select id="fFaculty" aria-label="Chọn khoa" hidden></select>
         <select id="fTime" aria-label="Thời gian"><option value="upcoming">Sự kiện sắp diễn ra</option><option value="live">Đang diễn ra</option><option value="ended">Đã kết thúc</option><option value="">Tất cả thời gian</option></select>
         <select id="fField" aria-label="Lĩnh vực"><option value="">Tất cả lĩnh vực</option><option value="hoc-thuat">Học thuật</option><option value="van-hoa">Văn nghệ</option><option value="the-thao">Thể thao</option><option value="tinh-nguyen">Tình nguyện</option></select>
       </div>
@@ -38,7 +39,7 @@
 
 <section id="su-kien" class="tight">
   <div class="wrap">
-    <h2>Sự kiện nổi bật <a href="../student/event-list.html" data-auth data-student data-auth-msg="Vui lòng đăng nhập để xem tất cả sự kiện.">Xem tất cả</a></h2>
+    <h2>Sự kiện nổi bật <a href="../student/event-list.html">Xem tất cả</a></h2>
     <p class="count-note" id="evCount" aria-live="polite"></p>
     <div class="events" id="events"></div>
   </div>
@@ -47,7 +48,7 @@
 <section id="lich-hoat-dong" class="none"></section>
 <section id="tin-tuc" class="tight">
   <div class="wrap">
-    <h2>Tin tức &amp; Thông báo <a href="../student/notifications.html" data-auth data-student data-auth-msg="Vui lòng đăng nhập để xem tất cả tin tức và thông báo.">Xem tất cả</a></h2>
+    <h2>Tin tức &amp; Thông báo <a href="../student/notifications.html">Xem tất cả</a></h2>
     <div class="news" id="homeNews"></div>
   </div>
 </section>

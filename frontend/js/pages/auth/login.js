@@ -17,7 +17,7 @@
   $('password').addEventListener('keyup', caps);
   $('password').addEventListener('blur', function () { $('caps').hidden = true; });
 
-  ['username', 'password'].forEach(function (id) {
+  ['email', 'password'].forEach(function (id) {
     $(id).addEventListener('input', function () { err(id, ''); });
   });
 
@@ -26,7 +26,7 @@
     e.preventDefault();
     if (busy) return;
     var ok = [
-      err('username', $('username').value.trim() ? '' : 'Vui lòng nhập tên đăng nhập, email hoặc mã sinh viên'),
+      err('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('email').value.trim()) ? '' : 'Vui lòng nhập email hợp lệ'),
       err('password', $('password').value ? '' : 'Vui lòng nhập mật khẩu')
     ].every(Boolean);
     if (!ok) { A.toast('error', 'Vui lòng điền đầy đủ thông tin đăng nhập.'); A.focusFirstError($('f')); return; }
@@ -34,7 +34,7 @@
     var btn = $('f').querySelector('.submit');
     busy = true;
     A.setLoading(btn, true, 'Đang đăng nhập...');
-    A.api.login($('username').value, $('password').value, $('remember').checked).then(function (res) {
+    A.api.login($('email').value.trim(), $('password').value, $('remember').checked).then(function (res) {
       if (!res.ok) {
         busy = false;
         A.setLoading(btn, false);

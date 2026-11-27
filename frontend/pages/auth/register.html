@@ -22,20 +22,22 @@
       <ol class="steps" id="steps" aria-label="Các bước đăng ký">
         <li class="s cur" data-s="1"><span class="n">1</span><span class="t">Tài khoản</span></li>
         <li class="bar" aria-hidden="true"></li>
-        <li class="s" data-s="2"><span class="n">2</span><span class="t">Hồ sơ</span></li>
+        <li class="s" data-s="2"><span class="n">2</span><span class="t">Xác thực</span></li>
+        <li class="bar" aria-hidden="true"></li>
+        <li class="s" data-s="3"><span class="n">3</span><span class="t">Hồ sơ</span></li>
       </ol>
     </div>
 
     <!-- Bước 1: Tạo tài khoản -->
     <section id="step1" aria-labelledby="t1">
       <h1 id="t1" class="title">Tạo tài khoản SEMS</h1>
-      <p class="sub">Chọn tên đăng nhập và mật khẩu để bắt đầu.</p>
+      <p class="sub">Nhập email và đặt mật khẩu. Chúng tôi sẽ gửi mã OTP để xác thực email.</p>
       <form id="f1" novalidate>
         <div class="field">
-          <label for="username">Tên đăng nhập</label>
-          <input id="username" type="text" placeholder="Nhập tên đăng nhập" autocomplete="username" maxlength="30" autofocus>
-          <p class="hint">Chỉ dùng chữ và số (4-30 ký tự)</p>
-          <p class="err" id="e-username" role="alert"></p>
+          <label for="regEmail">Email</label>
+          <input id="regEmail" type="email" placeholder="Nhập email của bạn" autocomplete="email" maxlength="100" autofocus>
+          <p class="hint">Email dùng để đăng nhập và nhận mã OTP xác thực</p>
+          <p class="err" id="e-regEmail" role="alert"></p>
         </div>
         <div class="field">
           <label for="password">Mật khẩu</label>
@@ -48,19 +50,45 @@
           <div class="pw"><input id="password2" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password" data-lpignore="true" data-1p-ignore><button type="button" class="eye" data-target="password2" aria-label="Hiện mật khẩu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
           <p class="err" id="e-password2" role="alert"></p>
         </div>
-        <button class="submit" type="submit">Tạo tài khoản</button>
+        <button class="submit" type="submit">Tiếp tục</button>
       </form>
       <p class="alt">Bạn đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
     </section>
 
-    <!-- Bước 2: Thông tin cá nhân -->
+    <!-- Bước 2: Xác thực email bằng OTP -->
+    <section id="stepOtp" aria-labelledby="tOtp" hidden>
+      <h1 id="tOtp" class="title">Xác thực email</h1>
+      <p class="sub">Mã OTP gồm 6 chữ số đã được gửi tới <b id="otpTo"></b>.</p>
+      <form id="fOtp" novalidate>
+        <div class="field">
+          <label for="regOtp">Mã OTP</label>
+          <div class="inline">
+            <input id="regOtp" type="text" inputmode="numeric" maxlength="6" placeholder="Nhập mã OTP" autocomplete="one-time-code">
+            <button type="button" class="btn-otp" id="resendOtp">Gửi lại OTP</button>
+          </div>
+          <p class="hint" id="otpHint">Mã có hiệu lực 5 phút.</p>
+          <p class="err" id="e-regOtp" role="alert"></p>
+        </div>
+        <!-- Hộp thư demo: chỉ hiện khi chạy chế độ demo (chưa có máy chủ gửi email) -->
+        <div class="mailbox" id="mailbox" hidden>
+          <div class="mb-head">Hộp thư demo</div>
+          <p>Đến: <b id="mbTo"></b></p>
+          <p>Mã OTP xác thực tài khoản SEMS của bạn là:</p>
+          <div class="mb-code" id="mbCode"></div>
+          <p class="mb-note">Mã có hiệu lực 5 phút. Khi có backend, email thật sẽ được gửi và khung này biến mất.</p>
+        </div>
+        <button class="submit" type="submit">Xác thực</button>
+      </form>
+    </section>
+
+    <!-- Bước 3: Thông tin cá nhân -->
     <section id="step2" aria-labelledby="t2" hidden>
       <h1 id="t2" class="title">Thông tin cá nhân</h1>
       <p class="sub">Vui lòng hoàn thiện hồ sơ để bắt đầu trải nghiệm.</p>
       <form id="f2" novalidate>
         <div class="grid2">
           <div class="field"><label for="fullname">Họ và tên *</label><input id="fullname" type="text" autocomplete="name"><p class="err" id="e-fullname" role="alert"></p></div>
-          <div class="field"><label for="email">Email *</label><input id="email" type="email" autocomplete="email"><p class="err" id="e-email" role="alert"></p></div>
+          <div class="field"><label for="email">Email *</label><input id="email" type="email" autocomplete="email" readonly><p class="hint">Email đã được xác thực</p><p class="err" id="e-email" role="alert"></p></div>
           <div class="field"><label for="studentid">Mã sinh viên</label><input id="studentid" type="text" inputmode="numeric" placeholder="Chỉ nhập số"><p class="err" id="e-studentid" role="alert"></p></div>
           <div class="field"><label for="class">Lớp</label><input id="class" type="text"></div>
           <div class="field"><label for="faculty">Khoa</label><input id="faculty" type="text" list="facultyList" autocomplete="off"><datalist id="facultyList"><option value="Công nghệ thông tin"><option value="Kinh tế và Kế toán"><option value="Khoa học tự nhiên"><option value="Khoa học xã hội và Nhân văn"><option value="Ngoại ngữ"><option value="Sư phạm"><option value="Giáo dục thể chất – Quốc phòng"><option value="Kỹ thuật và Công nghệ"><option value="Toán và Thống kê"><option value="Vật lý và Khoa học vật liệu"></datalist></div>

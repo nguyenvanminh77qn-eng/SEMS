@@ -26,19 +26,18 @@
     latencyMs: 600            // độ trễ giả lập mạng
   }, window.SEMS_AUTH_CONFIG || {});
 
-  // Trang đích sau khi đăng nhập (đường dẫn tính từ pages/auth/). Mọi vai trò đều về trang chủ;
-  // từ header, admin vào "Khu vực quản trị", sinh viên vào các mục của cổng sinh viên.
+  // Trang đích sau khi đăng nhập (đường dẫn tính từ pages/auth/): mỗi vai trò vào thẳng trang của mình.
   var ROLE_HOME = {
-    admin: 'home.html',
-    student: 'home.html',
-    organizer: 'home.html'
+    admin: '../admin/overview.html',
+    organizer: '../organizer/organizer.html',
+    student: 'home.html'   // ../student/index.html chỉ tự chuyển sang trang Thông báo nên sinh viên vào trang chủ
   };
   var ROLE_LABEL = { admin: 'Quản trị viên', organizer: 'Người tổ chức', student: 'Sinh viên' };
 
   var K = {
     users: 'sems_users', session: 'sems_session', otp: 'sems_otp',
     flash: 'sems_flash', next: 'sems_next', lock: 'sems_lock',
-    seedVer: 'sems_seed_ver',
+    seedVer: 'sems_seed_ver', regOtp: 'sems_reg_otp',
     studentFlag: 'qn_logged_in'   // cờ đăng nhập mà cổng sinh viên (student.js) đang dùng
   };
 
@@ -63,12 +62,12 @@
      Khi có backend: xóa seedUsers() và thay thân các hàm trong `api` bằng fetch(). */
   function seedUsers() {
     return [
-      { id: 'u-admin', username: 'admin', password: hash('Admin@123'), role: 'admin', fullname: 'Quản trị viên SEMS', email: 'admin@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
-      { id: 'u-org', username: 'organizer', password: hash('Organizer@123'), role: 'organizer', fullname: 'Phòng Công tác sinh viên', email: 'organizer@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
-      { id: 'u-sv', username: 'sv4751050247', password: hash('Student@123'), role: 'student', fullname: 'Nguyễn Phương', email: '4751050247@student.qnu.edu.vn', studentid: '4751050247', cls: 'CNTT K47B', faculty: 'Công nghệ thông tin', phone: '0901234567', gender: 'Nam', avatar: null }
+      { id: 'u-admin', password: hash('Admin@123'), role: 'admin', fullname: 'Quản trị viên SEMS', email: 'admin@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
+      { id: 'u-org', password: hash('Organizer@123'), role: 'organizer', fullname: 'Phòng Công tác sinh viên', email: 'organizer@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
+      { id: 'u-sv', password: hash('Student@123'), role: 'student', fullname: 'Nguyễn Phương', email: '4751050247@student.qnu.edu.vn', studentid: '4751050247', cls: 'CNTT K47B', faculty: 'Công nghệ thông tin', phone: '0901234567', gender: 'Nam', avatar: null }
     ];
   }
-  var SEED_VERSION = 3;   // tăng số này khi đổi tài khoản mẫu để trình duyệt đã lưu bản cũ tự cập nhật
+  var SEED_VERSION = 4;   // tăng số này khi đổi tài khoản mẫu để trình duyệt đã lưu bản cũ tự cập nhật
   function users() {
     var u = get(K.users);
     if (!Array.isArray(u) || !u.length) { u = seedUsers(); set(K.users, u); set(K.seedVer, SEED_VERSION); return u; }
@@ -92,9 +91,9 @@
           return fail('locked', 'Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau ' + Math.ceil((lock.until - Date.now()) / 1000) + ' giây.');
         }
         var id = norm(identity);
-        var user = users().filter(function (u) { return norm(u.username) === id || norm(u.email) === id || (u.studentid && u.studentid === id); })[0];
+        var user = users().filter(function (u) { return norm(u.email) === id; })[0];
         if (!user) {
-          return failLogin(lock, 'Tài khoản không tồn tại.', 'username');
+          return failLogin(lock, 'Email này chưa được đăng ký.', 'email');
         }
         if (user.password !== hash(password)) {
           return failLogin(lock, 'Mật khẩu không đúng.', 'password');
@@ -105,54 +104,77 @@
       });
     },
 
+    // POST /auth/register/send-otp  (gửi mã OTP xác thực email khi đăng ký)
+    sendRegisterOtp: function (email) {
+      return wait(CONFIG.latencyMs).then(function () {
+        if (users().some(function (u) { return norm(u.email) === norm(email); })) return fail('dup', 'Email này đã được đăng ký.', 'email');
+        var code = randomOtp();
+        set(K.regOtp, { email: norm(email), code: code, exp: Date.now() + CONFIG.otpTtlMs, tries: 0, verified: false }, sessionStorage);
+        // Có backend: máy chủ gửi email thật và KHÔNG trả code về cho trình duyệt.
+        return { ok: true, email: email, demoCode: CONFIG.demoShowOtp ? code : null };
+      });
+    },
+
+    // POST /auth/register/verify-otp
+    verifyRegisterOtp: function (email, code) {
+      return wait(CONFIG.latencyMs / 2).then(function () {
+        var o = get(K.regOtp, sessionStorage);
+        var chk = checkOtpRecord(o, email, code, function () { del(K.regOtp, sessionStorage); }, function (x) { set(K.regOtp, x, sessionStorage); });
+        if (!chk.ok) return chk;
+        o.verified = true; set(K.regOtp, o, sessionStorage);
+        return { ok: true };
+      });
+    },
+
     // POST /auth/register  (đăng ký công khai luôn tạo vai trò sinh viên; admin/organizer do quản trị cấp)
+    // Email là định danh đăng nhập và phải được xác thực OTP trước.
     register: function (d) {
       return wait(CONFIG.latencyMs).then(function () {
         var list = users();
-        if (list.some(function (u) { return norm(u.username) === norm(d.username); })) return fail('dup', 'Tên đăng nhập đã được sử dụng.', 'username');
+        var o = get(K.regOtp, sessionStorage);
+        if (!o || !o.verified || o.email !== norm(d.email)) return fail('noverify', 'Email chưa được xác thực OTP. Vui lòng xác thực email trước.', 'email');
         if (list.some(function (u) { return norm(u.email) === norm(d.email); })) return fail('dup', 'Email này đã được đăng ký.', 'email');
         if (d.studentid && list.some(function (u) { return u.studentid && u.studentid === d.studentid; })) return fail('dup', 'Mã sinh viên này đã có tài khoản.', 'studentid');
         var user = {
-          id: uid(), username: d.username.trim(), password: hash(d.password), role: 'student',
+          id: uid(), password: hash(d.password), role: 'student',
           fullname: d.fullname.trim(), email: d.email.trim(), studentid: d.studentid || '', cls: d.cls || '',
           faculty: d.faculty || '', phone: d.phone || '', gender: d.gender || 'Nam', avatar: null
         };
         list.push(user);
         if (!saveUsers(list)) return fail('storage', 'Không lưu được dữ liệu trên trình duyệt (bộ nhớ đầy hoặc bị chặn).');
+        del(K.regOtp, sessionStorage);
         return { ok: true, user: publicUser(user) };
       });
     },
 
-    usernameTaken: function (username) {
-      return users().some(function (u) { return norm(u.username) === norm(username); });
+    emailTaken: function (email) {
+      return users().some(function (u) { return norm(u.email) === norm(email); });
     },
 
     // POST /auth/forgot/send-otp
-    sendOtp: function (username, email) {
+    sendOtp: function (email) {
       return wait(CONFIG.latencyMs).then(function () {
-        var user = users().filter(function (u) { return norm(u.username) === norm(username) && norm(u.email) === norm(email); })[0];
-        if (!user) return fail('nomatch', 'Tên đăng nhập và email không khớp với tài khoản nào.');
-        var buf = new Uint32Array(1);
-        (window.crypto || window.msCrypto).getRandomValues(buf);
-        var code = String(100000 + (buf[0] % 900000));
-        set(K.otp, { username: user.username, email: user.email, code: code, exp: Date.now() + CONFIG.otpTtlMs, tries: 0 });
+        var user = users().filter(function (u) { return norm(u.email) === norm(email); })[0];
+        if (!user) return fail('nomatch', 'Email này chưa được đăng ký tài khoản nào.', 'email');
+        var code = randomOtp();
+        set(K.otp, { email: norm(user.email), code: code, exp: Date.now() + CONFIG.otpTtlMs, tries: 0 });
         // Có backend: máy chủ gửi email thật và KHÔNG trả code về cho trình duyệt.
         return { ok: true, email: user.email, demoCode: CONFIG.demoShowOtp ? code : null };
       });
     },
 
     // POST /auth/forgot/verify-otp
-    verifyOtp: function (username, code) {
-      return wait(CONFIG.latencyMs / 2).then(function () { return checkOtp(username, code, false); });
+    verifyOtp: function (email, code) {
+      return wait(CONFIG.latencyMs / 2).then(function () { return checkOtp(email, code); });
     },
 
     // POST /auth/forgot/reset
-    resetPassword: function (username, code, newPassword) {
+    resetPassword: function (email, code, newPassword) {
       return wait(CONFIG.latencyMs).then(function () {
-        var chk = checkOtp(username, code, true);
+        var chk = checkOtp(email, code);
         if (!chk.ok) return chk;
         var list = users();
-        var user = list.filter(function (u) { return norm(u.username) === norm(username); })[0];
+        var user = list.filter(function (u) { return norm(u.email) === norm(email); })[0];
         if (!user) return fail('nomatch', 'Không tìm thấy tài khoản.');
         user.password = hash(newPassword);
         saveUsers(list);
@@ -169,7 +191,7 @@
         if (!user) return fail('nouser', 'Phiên đăng nhập không còn hợp lệ.');
         if (patch.email && list.some(function (u) { return u.id !== id && norm(u.email) === norm(patch.email); })) return fail('dup', 'Email này đã được tài khoản khác sử dụng.', 'email');
         if (patch.studentid && list.some(function (u) { return u.id !== id && u.studentid && u.studentid === patch.studentid; })) return fail('dup', 'Mã sinh viên này đã có tài khoản khác.', 'studentid');
-        Object.keys(patch).forEach(function (k) { if (k !== 'id' && k !== 'role' && k !== 'username' && k !== 'password') user[k] = patch[k]; });
+        Object.keys(patch).forEach(function (k) { if (k !== 'id' && k !== 'role' && k !== 'password') user[k] = patch[k]; });
         if (!saveUsers(list)) return fail('storage', 'Không lưu được (bộ nhớ trình duyệt đầy). Thử ảnh nhỏ hơn.');
         return { ok: true, user: publicUser(user) };
       });
@@ -201,16 +223,24 @@
     return fail('bad', msg + (left <= 2 ? ' Còn ' + left + ' lần thử.' : ''), field);
   }
 
-  function checkOtp(username, code, consume) {
-    var o = get(K.otp);
-    if (!o || norm(o.username) !== norm(username)) return fail('noOtp', 'Chưa có mã OTP. Hãy bấm "Gửi OTP" trước.', 'otp');
-    if (Date.now() > o.exp) { del(K.otp); return fail('expired', 'Mã OTP đã hết hạn. Hãy gửi lại mã mới.', 'otp'); }
-    if (o.tries >= CONFIG.otpMaxTries) { del(K.otp); return fail('tooMany', 'Bạn nhập sai quá nhiều lần. Hãy gửi lại mã mới.', 'otp'); }
+  function randomOtp() {
+    var buf = new Uint32Array(1);
+    (window.crypto || window.msCrypto).getRandomValues(buf);
+    return String(100000 + (buf[0] % 900000));
+  }
+  // Kiểm tra bản ghi OTP (dùng chung cho đăng ký và quên mật khẩu)
+  function checkOtpRecord(o, email, code, drop, save) {
+    if (!o || norm(o.email) !== norm(email)) return fail('noOtp', 'Chưa có mã OTP. Hãy bấm "Gửi OTP" trước.', 'otp');
+    if (Date.now() > o.exp) { drop(); return fail('expired', 'Mã OTP đã hết hạn. Hãy gửi lại mã mới.', 'otp'); }
+    if (o.tries >= CONFIG.otpMaxTries) { drop(); return fail('tooMany', 'Bạn nhập sai quá nhiều lần. Hãy gửi lại mã mới.', 'otp'); }
     if (o.code !== String(code).trim()) {
-      o.tries++; set(K.otp, o);
+      o.tries++; save(o);
       return fail('bad', 'Mã OTP không đúng. Còn ' + (CONFIG.otpMaxTries - o.tries) + ' lần thử.', 'otp');
     }
     return { ok: true };
+  }
+  function checkOtp(email, code) {
+    return checkOtpRecord(get(K.otp), email, code, function () { del(K.otp); }, function (x) { set(K.otp, x); });
   }
 
   /* ---------- 3. PHIÊN ĐĂNG NHẬP & VAI TRÒ ---------- */
@@ -240,7 +270,7 @@
     }
     return user ? publicUser(user) : null;
   }
-  function roleHome(user) { return ROLE_HOME[user && user.role] || 'home.html'; }
+  function roleHome(user) { return ROLE_HOME[user && user.role] || 'home.html'; }   // khách / vai trò lạ về trang chủ
   function roleLabel(role) { return ROLE_LABEL[role] || 'Người dùng'; }
 
   // "Quay lại trang đã định vào sau khi đăng nhập". Chỉ nhận: file .html cùng thư mục, hoặc trang trong ../student/ (có thể kèm ?id=...) (chống chuyển hướng bậy)
@@ -279,7 +309,7 @@
     el.setAttribute('role', type === 'error' ? 'alert' : 'status');
     el.innerHTML = '<span class="ti" aria-hidden="true">' + (TOAST_ICON[type] || 'i') + '</span><span class="tm">' + esc(message) + '</span><button type="button" class="tx" aria-label="Đóng thông báo">&times;</button>';
     var timer;
-    function close() { clearTimeout(timer); el.classList.add('out'); setTimeout(function () { el.remove(); }, 220); }
+    function close() { if (el.classList.contains('out')) return; clearTimeout(timer); el.classList.add('out'); setTimeout(function () { el.remove(); }, 420); }
     el.querySelector('.tx').addEventListener('click', close);
     toastBox.appendChild(el);
     while (toastBox.children.length > 4) toastBox.firstChild.remove();
@@ -357,7 +387,7 @@
     document.body.appendChild(bg);
     var focusable = bg.querySelectorAll('a,button');
     focusable[0].focus();
-    function close() { document.removeEventListener('keydown', onKey); bg.remove(); if (opener && opener.focus) opener.focus(); }
+    function close() { document.removeEventListener('keydown', onKey); del(K.next, sessionStorage); bg.remove(); if (opener && opener.focus) opener.focus(); }
     function onKey(e) {
       if (e.key === 'Escape') close();
       if (e.key === 'Tab') {
@@ -411,7 +441,6 @@
       '<div class="has-menu"><button class="nav-trigger' + (eventsActive ? ' is-active' : '') + '" type="button" aria-haspopup="true" aria-expanded="false" data-menu-trigger>Sự kiện ' + ICON.chevron + '</button>' +
       '<div class="menu" role="menu">' +
       item('event-list.html', 'Danh sách sự kiện', 'Vui lòng đăng nhập để xem danh sách sự kiện.') +
-      item('event-register.html', 'Đăng kí', 'Vui lòng đăng nhập để đăng kí tham gia sự kiện.') +
       item('my-events.html', 'Sự kiện của tôi', 'Vui lòng đăng nhập để xem sự kiện của bạn.') +
       '</div></div>' +
       navLink('calendar', STUDENT + 'activity-calendar.html', 'Lịch hoạt động', 'Vui lòng đăng nhập để xem lịch hoạt động.') +
