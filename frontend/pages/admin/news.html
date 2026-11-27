@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý tin tức - SEMS Admin</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/reset.css">
+  <link rel="stylesheet" href="../../css/global.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/pages/admin/event-shared.css">
+  <link rel="stylesheet" href="../../css/pages/admin/news.css">
+</head>
+<body data-sems-page="news">
+  <div id="sems-layout"></div>
+  <main class="main-content">
+
+    <div class="ev-page-head">
+      <div>
+        <h1 class="page-title">Quản lý tin tức</h1>
+        <p class="ev-page-sub">Bài viết giới thiệu sự kiện và hoạt động dành cho sinh viên</p>
+      </div>
+      <button type="button" class="btn btn-primary" id="btnCreateNews"><span data-ic="add"></span>Tạo bài viết mới</button>
+    </div>
+
+    <!-- Sắp xếp + tìm kiếm -->
+    <section class="card news-toolbar">
+      <div class="news-tabs" id="newsSort">
+        <button type="button" class="news-tab active" data-sort="new">Mới nhất</button>
+        <button type="button" class="news-tab" data-sort="old">Cũ nhất</button>
+      </div>
+      <label class="news-search">
+        <span data-ic="search"></span>
+        <input id="newsSearch" type="search" placeholder="Tìm bài viết..." autocomplete="off">
+      </label>
+    </section>
+
+    <!-- Danh sách bài viết (vẽ bằng news.js) -->
+    <div id="newsList" class="news-list"></div>
+  </main>
+
+  <!-- MODAL: chi tiết / form / xác nhận xóa bài viết (nội dung vẽ bằng news.js) -->
+  <div class="modal-overlay" id="modalNews">
+    <div class="modal-content"></div>
+  </div>
+
+  <script src="../../js/components/modal.js"></script>
+  <script src="../../js/config/navigation.js"></script>
+  <script src="../../js/components/layout.js"></script>
+  <script src="../../js/main.js"></script>
+  <script src="../../js/pages/admin/event-shared.js"></script>
+  <script src="../../js/pages/admin/news.js"></script>
+</body>
+</html>

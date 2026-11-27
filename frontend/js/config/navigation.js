@@ -1,5 +1,7 @@
 window.SEMS_NAVIGATION = [
   { page: 'overview', label: 'Tổng quan', file: 'overview.html' },
+  { page: 'events', label: 'Quản lý sự kiện', file: 'events.html' },
+  { page: 'news', label: 'Quản lý tin tức', file: 'news.html' },
   { page: 'students', label: 'Quản lý tài khoản', file: 'students.html' },
   { page: 'notifications', label: 'Gửi thông báo', file: 'notifications.html' },
   { page: 'stats-events', label: 'Thống kê sự kiện', file: 'stats-events.html' },

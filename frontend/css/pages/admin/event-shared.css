@@ -1,0 +1,626 @@
+/* ==========================================
+   CSS DÙNG CHUNG: Quản lý sự kiện / Quản lý tin tức / Tổng quan sự kiện (Admin)
+   (đi cùng js/pages/admin/event-shared.js)
+
+   Màu và font lấy từ biến của nhóm (variables.css). Phần sau dấu phẩy
+   là màu dự phòng, dùng khi biến chưa tồn tại.
+   Class của phần này đều bắt đầu bằng "ev-" để không trùng với code nhóm.
+   ========================================== */
+
+:root {
+  --ev-primary: var(--color-primary, #1E70EB);
+  --ev-primary-hover: var(--color-primary-hover, #1A5FCC);
+  --ev-primary-light: var(--color-primary-light, #EBF3FE);
+  --ev-text: var(--color-text-main, #1F2937);
+  --ev-body: var(--color-text-body, #374151);
+  --ev-muted: var(--color-text-muted, #6B7280);
+  --ev-border: #E5E7EB;
+  --ev-soft: #F8FAFC;
+  --ev-radius: var(--radius-sm, 8px);
+}
+
+/* Icon */
+
+.ev-ic {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex: none;
+  vertical-align: middle;
+}
+
+.btn .ev-ic {
+  margin-right: 6px;
+}
+
+/* Tiêu đề trang kèm nút bên phải */
+
+.ev-page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.ev-page-head .page-title {
+  margin-bottom: 6px;
+  letter-spacing: -0.015em;
+}
+
+.ev-page-sub {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ev-muted);
+}
+
+/* Nút bổ sung */
+
+.btn-warning {
+  background: #F59E0B;
+  color: #fff;
+  border: 1px solid #F59E0B;
+}
+
+.btn-warning:hover {
+  background: #D97706;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Trạng thái sự kiện */
+
+.ev-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #F3F4F6;
+  color: #4B5563;
+  flex-shrink: 0;
+}
+
+.ev-status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ev-status.live   { background: #DCFCE7; color: #15803D; }
+.ev-status.soon   { background: #DBEAFE; color: #1D4ED8; }
+.ev-status.lock   { background: #FEF3C7; color: #B45309; }
+.ev-status.cancel { background: #FEE2E2; color: #B91C1C; }
+.ev-status.done   { background: #F3F4F6; color: #4B5563; }
+
+/* Thanh tiến độ đăng ký */
+
+.ev-progress {
+  height: 6px;
+  background: #E5E7EB;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.ev-progress i {
+  display: block;
+  height: 100%;
+  background: #10B981;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.ev-progress.full i {
+  background: #F59E0B;
+}
+
+/* Dòng thông tin (thời gian, địa điểm...) */
+
+.ev-info-list {
+  display: grid;
+  gap: 7px;
+}
+
+.ev-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ev-muted);
+  line-height: 1.45;
+}
+
+.ev-info-row .ev-ic {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  color: #9CA3AF;
+}
+
+.ev-info-row b {
+  color: var(--ev-text);
+  font-weight: 600;
+}
+
+/* Ảnh */
+
+.ev-img {
+  background: #F1F5F9;
+  object-fit: cover;
+  display: block;
+}
+
+/* Modal: giới hạn chiều cao theo màn hình, nội dung bên trong cuộn riêng */
+
+.ev-modal-body {
+  padding: 6px 2px 4px;
+  max-height: calc(100vh - 135px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+
+.ev-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ev-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ev-modal-body::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 999px;
+}
+
+.ev-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+.ev-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ev-border);
+}
+
+.ev-modal-actions.left {
+  justify-content: flex-start;
+}
+
+/* ==========================================
+   CHI TIẾT SỰ KIỆN (THAM KHẢO PHONG CÁCH ẢNH 5 - GIAO DIỆN SÁNG)
+   ========================================== */
+
+.ev-detail-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ev-detail-cover {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  max-height: 220px;
+  border-radius: 10px;
+  border: 1px solid var(--ev-border);
+}
+
+.ev-detail-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ev-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+}
+
+.ev-detail-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ev-text);
+}
+
+.ev-detail-desc {
+  color: var(--ev-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.ev-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ev-detail-item {
+  background: var(--ev-soft);
+  border: 1px solid var(--ev-border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ev-text);
+}
+
+.ev-detail-item small {
+  display: block;
+  color: var(--ev-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.ev-detail-subline {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ev-body);
+}
+
+.ev-section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin: 14px 0 8px;
+  color: var(--ev-text);
+}
+
+.ev-notice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ev-notice-list li {
+  background: var(--ev-soft);
+  border: 1px solid var(--ev-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ev-body);
+}
+
+.ev-notice-list small {
+  display: block;
+  color: var(--ev-muted);
+  margin-top: 4px;
+  font-size: 11.5px;
+}
+
+.ev-hint {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  color: var(--ev-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 8px 0 0;
+}
+
+.ev-hint .ev-ic {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+}
+
+.ev-confirm-text {
+  line-height: 1.6;
+  color: var(--ev-body);
+  margin: 0 0 14px;
+  font-size: 13.5px;
+}
+
+/* Hộp thông báo trong modal */
+
+.ev-banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.ev-banner .ev-ic {
+  margin-top: 2px;
+}
+
+.ev-banner.danger { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+.ev-banner.warn   { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+.ev-banner.info   { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+
+/* ==========================================
+   FORM TẠO / SỬA SỰ KIỆN (THOÁNG GỌN, ĐỒNG NHẤT)
+   ========================================== */
+
+.ev-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ev-form-stack .form-group {
+  margin-bottom: 0;
+}
+
+.ev-form-stack .form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ev-text);
+}
+
+.ev-form-stack .form-control {
+  height: 38px;
+  border-radius: 8px;
+  font-size: 13px;
+  padding: 7px 11px;
+}
+
+.ev-form-stack select.form-control {
+  height: 38px;
+}
+
+.ev-form-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ev-form-stack textarea.form-control,
+.ev-textarea {
+  height: auto;
+  min-height: 74px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.ev-field-error {
+  display: block;
+  color: #B91C1C;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.ev-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  max-height: 140px;
+  border: 1.5px dashed #CBD5E1;
+  border-radius: 10px;
+  color: var(--ev-muted);
+  cursor: pointer;
+  overflow: hidden;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: var(--ev-soft);
+  padding: 6px;
+}
+
+.ev-upload:hover {
+  border-color: var(--ev-primary);
+  color: var(--ev-primary);
+  background: var(--ev-primary-light);
+}
+
+.ev-upload input {
+  display: none;
+}
+
+.ev-upload img {
+  width: 100%;
+  height: 112px;
+  object-fit: cover;
+  border-radius: 7px;
+  display: block;
+}
+
+.ev-organizer-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ev-organizer-row .btn {
+  height: 38px;
+  white-space: nowrap;
+  padding: 0 14px;
+}
+
+.ev-selected-organizers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ev-organizer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ev-primary-light);
+  color: var(--ev-primary);
+  border-radius: 999px;
+  padding: 4px 8px 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ev-organizer-chip button {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+/* Toast */
+
+.ev-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  max-width: 380px;
+  background: #DCFCE7;
+  border: 1px solid #86EFAC;
+  color: #166534;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  z-index: 3000;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.ev-toast.show {
+  opacity: 1;
+  transform: none;
+}
+
+.ev-toast.err {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #991B1B;
+}
+
+.ev-empty {
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--ev-muted);
+  font-size: 14px;
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  .ev-form-pair,
+  .ev-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================
+   THANH TAB CÓ KHỐI XANH TRƯỢT THEO (Quản lý sự kiện / tin tức)
+   ========================================== */
+
+.ev-tabs,
+.news-tabs {
+  position: relative;
+}
+
+.ev-tab-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 8px;
+  background: var(--ev-primary-light);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.is-ready > .ev-tab-indicator {
+  opacity: 1;
+}
+
+.ev-tabs .ev-tab,
+.news-tabs .news-tab {
+  position: relative;
+  z-index: 1;
+}
+
+/* Tab đang chọn: nền do khối trượt đảm nhiệm */
+.ev-tabs.is-ready .ev-tab.active,
+.news-tabs.is-ready .news-tab.active {
+  background: transparent;
+}
+
+
+/* ==========================================
+   HIỆU ỨNG NẢY KHI DI CHUỘT (thẻ + nút)
+   ========================================== */
+
+.btn,
+.quick-link,
+.kpi-card,
+.ev-card,
+.news-card,
+.dash-event,
+.ev-tab,
+.news-tab {
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+              background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(30, 112, 235, 0.22);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  box-shadow: none;
+}
+
+.ev-card:hover,
+.news-card:hover,
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(30, 112, 235, 0.14);
+}
+
+.dash-event:hover {
+  transform: translateX(4px) translateY(-2px);
+  border-color: var(--ev-primary);
+  box-shadow: 0 8px 18px rgba(30, 112, 235, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .quick-link, .kpi-card, .ev-card, .news-card, .dash-event, .ev-tab, .news-tab {
+    transition: none;
+    transform: none !important;
+  }
+}
