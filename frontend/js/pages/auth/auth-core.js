@@ -3,27 +3,22 @@
 
    Gồm:
    1. Cấu hình
-   2. Kho dữ liệu DEMO (localStorage) + lớp API giả lập  <-- chỗ duy nhất cần thay khi có backend
+   2. Lớp API: gọi backend Spring Boot (/api/v1/auth/...), tự gắn token và tự làm mới token
    3. Phiên đăng nhập + phân quyền theo vai trò (admin / organizer / student)
    4. Thông báo (toast) và hộp thoại "Cần đăng nhập"
    5. Header theo trạng thái đăng nhập + bảo vệ trang
 
-   LƯU Ý: chưa có máy chủ nên mọi thứ lưu ở trình duyệt, mật khẩu chỉ được
-   băm sơ sài để demo. Khi có backend, thay thân các hàm trong `api` bằng
-   fetch() tới máy chủ; giao diện không cần sửa.
+   Backend phải đang chạy ở http://localhost:8080 (đổi bằng window.SEMS_AUTH_CONFIG.apiBase nếu khác).
+   Mỗi hàm trong `api` trả về Promise<{ ok: true, ... } | { ok: false, code, message, field }>.
    ========================================================= */
 (function () {
   'use strict';
 
   /* ---------- 1. CẤU HÌNH ---------- */
   var CONFIG = window.SEMS_AUTH_CONFIG = Object.assign({
-    demoShowOtp: true,        // true: hiển thị mã OTP trong "hộp thư demo" (vì chưa có máy chủ gửi email). Có backend thì đặt false.
-    otpTtlMs: 5 * 60 * 1000,  // mã OTP có hiệu lực 5 phút
-    otpMaxTries: 5,           // nhập sai quá 5 lần phải gửi lại mã
-    otpResendSec: 60,         // chờ 60 giây mới được gửi lại
-    maxLoginFails: 5,         // sai mật khẩu quá 5 lần bị khóa tạm
-    lockMs: 30 * 1000,
-    latencyMs: 600            // độ trễ giả lập mạng
+    apiBase: 'http://' + (location.hostname || 'localhost') + ':8080/api/v1',   // địa chỉ backend
+    timeoutMs: 20000,         // quá thời gian này coi như mất kết nối
+    otpResendSec: 60          // chờ 60 giây mới được gửi lại OTP (khớp app.otp.resend-seconds ở backend)
   }, window.SEMS_AUTH_CONFIG || {});
 
   // Trang đích sau khi đăng nhập (đường dẫn tính từ pages/auth/): mỗi vai trò vào thẳng trang của mình.
@@ -35,9 +30,11 @@
   var ROLE_LABEL = { admin: 'Quản trị viên', organizer: 'Người tổ chức', student: 'Sinh viên' };
 
   var K = {
-    users: 'sems_users', session: 'sems_session', otp: 'sems_otp',
-    flash: 'sems_flash', next: 'sems_next', lock: 'sems_lock',
-    seedVer: 'sems_seed_ver', regOtp: 'sems_reg_otp',
+    users: 'sems_users',      // bản sao hồ sơ người đang đăng nhập (cổng sinh viên student.js cũng đọc khóa này)
+    session: 'sems_session',  // { id } của người đang đăng nhập
+    tokens: 'sems_tokens',    // { accessToken, refreshToken, exp }
+    flash: 'sems_flash', next: 'sems_next', verifyEmail: 'sems_verify_email',
+    avatarPrefix: 'sems_avatar_',
     studentFlag: 'qn_logged_in'   // cờ đăng nhập mà cổng sinh viên (student.js) đang dùng
   };
 
@@ -48,227 +45,270 @@
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function norm(s) { return String(s || '').trim().toLowerCase(); }
-  function uid() { return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-  // Băm sơ sài chỉ để không lưu mật khẩu dạng chữ thường trong demo. KHÔNG an toàn thật sự.
-  function hash(str) {
-    var h1 = 5381, h2 = 52711, s = 'sems:' + str;
-    for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); h1 = (h1 * 33) ^ c; h2 = (h2 * 33) ^ c; }
-    return (h1 >>> 0).toString(16) + (h2 >>> 0).toString(16);
-  }
   function fail(code, message, field) { return { ok: false, code: code, message: message, field: field || null }; }
 
-  /* ---------- 2. KHO DỮ LIỆU DEMO ----------
-     Ba tài khoản khởi tạo bên dưới chỉ để chạy thử khi chưa có backend (không còn hiển thị trên giao diện).
-     Khi có backend: xóa seedUsers() và thay thân các hàm trong `api` bằng fetch(). */
-  function seedUsers() {
-    return [
-      { id: 'u-admin', password: hash('Admin@123'), role: 'admin', fullname: 'Quản trị viên SEMS', email: 'admin@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
-      { id: 'u-org', password: hash('Organizer@123'), role: 'organizer', fullname: 'Phòng Công tác sinh viên', email: 'organizer@qnu.edu.vn', studentid: '', cls: '', faculty: '', phone: '', gender: 'Khác', avatar: null },
-      { id: 'u-sv', password: hash('Student@123'), role: 'student', fullname: 'Nguyễn Phương', email: '4751050247@student.qnu.edu.vn', studentid: '4751050247', cls: 'CNTT K47B', faculty: 'Công nghệ thông tin', phone: '0901234567', gender: 'Nam', avatar: null }
-    ];
-  }
-  var SEED_VERSION = 4;   // tăng số này khi đổi tài khoản mẫu để trình duyệt đã lưu bản cũ tự cập nhật
-  function users() {
-    var u = get(K.users);
-    if (!Array.isArray(u) || !u.length) { u = seedUsers(); set(K.users, u); set(K.seedVer, SEED_VERSION); return u; }
-    if (get(K.seedVer) !== SEED_VERSION) {
-      var seeds = seedUsers(), ids = seeds.map(function (s) { return s.id; });
-      u = seeds.concat(u.filter(function (x) { return ids.indexOf(x.id) === -1; }));   // giữ nguyên tài khoản người dùng tự đăng ký
-      set(K.users, u); set(K.seedVer, SEED_VERSION);
-    }
-    return u;
-  }
-  function saveUsers(u) { return set(K.users, u); }
-  function publicUser(u) { var c = Object.assign({}, u); delete c.password; return c; }
+  /* ---------- 2. LỚP API (gọi backend thật) ---------- */
+  var BACKEND_DOWN = 'Không kết nối được máy chủ. Hãy kiểm tra backend đã chạy (Started SemsApplication) rồi thử lại.';
 
-  /* ----- API giả lập: mỗi hàm trả về Promise. Thay bằng fetch() khi có backend ----- */
+  function rawFetch(method, path, body, token) {
+    var headers = { 'Accept': 'application/json' };
+    if (body !== undefined) headers['Content-Type'] = 'application/json';
+    if (token) headers.Authorization = 'Bearer ' + token;
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, CONFIG.timeoutMs) : null;
+    return fetch(CONFIG.apiBase + path, {
+      method: method, headers: headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: ctl ? ctl.signal : undefined
+    }).then(function (resp) {
+      return resp.text().then(function (t) {
+        var json = null;
+        try { json = t ? JSON.parse(t) : null; } catch (e) { /* phản hồi không phải JSON */ }
+        return { status: resp.status, body: json };
+      });
+    }).then(function (r) { clearTimeout(timer); return r; }, function (e) { clearTimeout(timer); throw e; });
+  }
+
+  // ----- token -----
+  function tokenStore() { return get(K.session, sessionStorage) ? sessionStorage : (get(K.session) ? localStorage : null); }
+  function getTokens() { var st = tokenStore(); return st ? get(K.tokens, st) : null; }
+  function saveTokens(res) {
+    var st = tokenStore() || sessionStorage;
+    set(K.tokens, { accessToken: res.accessToken, refreshToken: res.refreshToken, exp: Date.now() + (res.expiresIn || 0) * 1000 }, st);
+  }
+  var refreshing = null;
+  // Đổi refresh token lấy cặp token mới (chỉ chạy một lần dù nhiều request cùng hết hạn). Trả về Promise<boolean>.
+  function refreshTokens() {
+    if (refreshing) return refreshing;
+    var t = getTokens();
+    if (!t || !t.refreshToken) return Promise.resolve(false);
+    refreshing = rawFetch('POST', '/auth/refresh', { refreshToken: t.refreshToken }).then(function (r) {
+      refreshing = null;
+      if (r.status === 200 && r.body && r.body.result && r.body.result.accessToken) { saveTokens(r.body.result); return true; }
+      return false;
+    }, function (e) { refreshing = null; throw e; });
+    return refreshing;
+  }
+  // Gọi API cần đăng nhập: hết hạn access token thì tự làm mới rồi gọi lại một lần.
+  function authRequest(method, path, body) {
+    var t = getTokens();
+    if (!t) return Promise.resolve({ status: 401, body: null, noSession: true });
+    return rawFetch(method, path, body, t.accessToken).then(function (r) {
+      if (r.status !== 401) return r;
+      return refreshTokens().then(function (ok) {
+        if (!ok) { endSession(); return { status: 401, body: r.body, noSession: true }; }
+        return rawFetch(method, path, body, getTokens().accessToken);
+      });
+    });
+  }
+
+  // ----- chuyển đổi dữ liệu backend <-> giao diện -----
+  function pickRole(roles) {
+    roles = roles || [];
+    if (roles.indexOf('ADMIN') > -1) return 'admin';
+    if (roles.indexOf('ORGANIZER') > -1) return 'organizer';
+    return 'student';
+  }
+  function avatarOf(id) { try { return localStorage.getItem(K.avatarPrefix + id) || null; } catch (e) { return null; } }
+  function mapUser(u) {
+    return {
+      id: u.id, role: pickRole(u.roles), roles: u.roles || [],
+      fullname: u.fullName || '', email: u.email || '', studentid: u.studentCode || '',
+      cls: u.className || '', faculty: u.facultyName || '', phone: u.phone || '',
+      gender: u.gender || 'Nam', avatar: avatarOf(u.id)
+    };
+  }
+  function users() { var u = get(K.users); return Array.isArray(u) ? u : []; }
+  function cacheUser(user) {
+    var list = users().filter(function (x) { return x.id !== user.id; });
+    list.push(user);
+    set(K.users, list);
+  }
+
+  // Tên trường backend -> id ô nhập trên giao diện
+  var F_REGISTER = { email: 'regEmail', password: 'password', fullName: 'fullname', studentCode: 'studentid', className: 'class', facultyName: 'faculty', phone: 'phone' };
+  var F_PROFILE = { fullName: 'fullname', phone: 'phone', className: 'class', facultyName: 'faculty' };
+  var F_PASSWORD = { currentPassword: 'old', newPassword: 'new1' };
+  var F_RESET = { email: 'email', otp: 'otp', newPassword: 'password' };
+  var F_OTP = { otp: 'otp', email: 'email' };
+  var F_DUP = [['Email', 'regEmail'], ['Số điện thoại', 'phone'], ['Mã sinh viên', 'studentid']];
+
+  // Đổi phản hồi lỗi của backend thành { ok:false, code, message, field, fields }
+  function toFail(r, fieldMap, dupMap) {
+    var b = r.body || {}, res = b.result;
+    var out = { ok: false, status: r.status, code: 'error', message: b.message || 'Có lỗi xảy ra, vui lòng thử lại.', field: null, fields: {} };
+    if (r.noSession) { out.code = 'session'; out.message = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'; return out; }
+    if (res && typeof res === 'object') {
+      if (res.errorCode) out.code = res.errorCode;
+      Object.keys(res).forEach(function (k) {
+        var id = fieldMap && fieldMap[k];
+        if (!id) return;
+        out.fields[id] = res[k];
+        if (!out.field) { out.field = id; out.message = res[k]; }
+      });
+    }
+    if (r.status === 400 && !out.field && out.message === 'Validation failed') out.message = 'Dữ liệu chưa hợp lệ, vui lòng kiểm tra lại.';
+    if (r.status === 409) {
+      out.code = 'dup';
+      (dupMap || []).some(function (d) { if (out.message.indexOf(d[0]) === 0) { out.field = d[1]; out.fields[d[1]] = out.message; return true; } return false; });
+    } else if (r.status === 429) { out.code = 'rate_limited'; }
+    else if (r.status === 401 && out.code === 'error') { out.code = 'unauthorized'; }
+    else if (r.status >= 500 && !b.message) { out.message = 'Máy chủ gặp lỗi, vui lòng thử lại sau.'; }
+    return out;
+  }
+  function netFail(e) { return fail('network', BACKEND_DOWN); }
+  function ok2xx(r) { return r.status >= 200 && r.status < 300; }
+
   var api = {
     // POST /auth/login
     login: function (identity, password, remember) {
-      return wait(CONFIG.latencyMs).then(function () {
-        var lock = get(K.lock) || { count: 0, until: 0 };
-        if (Date.now() < lock.until) {
-          return fail('locked', 'Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau ' + Math.ceil((lock.until - Date.now()) / 1000) + ' giây.');
+      return rawFetch('POST', '/auth/login', { email: String(identity || '').trim(), password: password }).then(function (r) {
+        if (!ok2xx(r)) {
+          var f = toFail(r, { email: 'email', password: 'password' });
+          if (r.status === 401 && !f.field) f.field = 'password';   // backend không cho biết sai email hay sai mật khẩu
+          return f;
         }
-        var id = norm(identity);
-        var user = users().filter(function (u) { return norm(u.email) === id; })[0];
-        if (!user) {
-          return failLogin(lock, 'Email này chưa được đăng ký.', 'email');
-        }
-        if (user.password !== hash(password)) {
-          return failLogin(lock, 'Mật khẩu không đúng.', 'password');
-        }
-        del(K.lock);
-        startSession(user, !!remember);
-        return { ok: true, user: publicUser(user) };
-      });
+        var d = r.body.result, user = mapUser(d.user);
+        startSession(user, !!remember, d);
+        return { ok: true, user: user };
+      }).catch(netFail);
     },
 
-    // POST /auth/register/send-otp  (gửi mã OTP xác thực email khi đăng ký)
-    sendRegisterOtp: function (email) {
-      return wait(CONFIG.latencyMs).then(function () {
-        if (users().some(function (u) { return norm(u.email) === norm(email); })) return fail('dup', 'Email này đã được đăng ký.', 'email');
-        var code = randomOtp();
-        set(K.regOtp, { email: norm(email), code: code, exp: Date.now() + CONFIG.otpTtlMs, tries: 0, verified: false }, sessionStorage);
-        // Có backend: máy chủ gửi email thật và KHÔNG trả code về cho trình duyệt.
-        return { ok: true, email: email, demoCode: CONFIG.demoShowOtp ? code : null };
-      });
-    },
-
-    // POST /auth/register/verify-otp
-    verifyRegisterOtp: function (email, code) {
-      return wait(CONFIG.latencyMs / 2).then(function () {
-        var o = get(K.regOtp, sessionStorage);
-        var chk = checkOtpRecord(o, email, code, function () { del(K.regOtp, sessionStorage); }, function (x) { set(K.regOtp, x, sessionStorage); });
-        if (!chk.ok) return chk;
-        o.verified = true; set(K.regOtp, o, sessionStorage);
-        return { ok: true };
-      });
-    },
-
-    // POST /auth/register  (đăng ký công khai luôn tạo vai trò sinh viên; admin/organizer do quản trị cấp)
-    // Email là định danh đăng nhập và phải được xác thực OTP trước.
+    // POST /auth/register : tạo tài khoản (chưa đăng nhập được) và gửi OTP xác thực email
     register: function (d) {
-      return wait(CONFIG.latencyMs).then(function () {
-        var list = users();
-        var o = get(K.regOtp, sessionStorage);
-        if (!o || !o.verified || o.email !== norm(d.email)) return fail('noverify', 'Email chưa được xác thực OTP. Vui lòng xác thực email trước.', 'email');
-        if (list.some(function (u) { return norm(u.email) === norm(d.email); })) return fail('dup', 'Email này đã được đăng ký.', 'email');
-        if (d.studentid && list.some(function (u) { return u.studentid && u.studentid === d.studentid; })) return fail('dup', 'Mã sinh viên này đã có tài khoản.', 'studentid');
-        var user = {
-          id: uid(), password: hash(d.password), role: 'student',
-          fullname: d.fullname.trim(), email: d.email.trim(), studentid: d.studentid || '', cls: d.cls || '',
-          faculty: d.faculty || '', phone: d.phone || '', gender: d.gender || 'Nam', avatar: null
-        };
-        list.push(user);
-        if (!saveUsers(list)) return fail('storage', 'Không lưu được dữ liệu trên trình duyệt (bộ nhớ đầy hoặc bị chặn).');
-        del(K.regOtp, sessionStorage);
-        return { ok: true, user: publicUser(user) };
-      });
+      var body = {
+        email: String(d.email || '').trim(), password: d.password, fullName: String(d.fullname || '').trim(),
+        studentCode: String(d.studentid || '').trim(), className: d.cls || '', facultyName: d.faculty || '',
+        phone: d.phone || '', gender: d.gender || ''
+      };
+      return rawFetch('POST', '/auth/register', body).then(function (r) {
+        return ok2xx(r) ? { ok: true, email: body.email } : toFail(r, F_REGISTER, F_DUP);
+      }).catch(netFail);
     },
 
-    emailTaken: function (email) {
-      return users().some(function (u) { return norm(u.email) === norm(email); });
+    // POST /auth/resend-otp (xác thực email khi đăng ký)
+    sendRegisterOtp: function (email) {
+      return rawFetch('POST', '/auth/resend-otp', { email: String(email || '').trim(), purpose: 'VERIFY_EMAIL' }).then(function (r) {
+        return ok2xx(r) ? { ok: true, email: String(email).trim() } : toFail(r, F_OTP);
+      }).catch(netFail);
     },
 
-    // POST /auth/forgot/send-otp
+    // POST /auth/verify-email
+    verifyRegisterOtp: function (email, code) {
+      return rawFetch('POST', '/auth/verify-email', { email: String(email || '').trim(), otp: String(code || '').trim() }).then(function (r) {
+        return ok2xx(r) ? { ok: true } : toFail(r, F_OTP);
+      }).catch(netFail);
+    },
+
+    // POST /auth/forgot-password (luôn báo thành công dù email có tồn tại hay không)
     sendOtp: function (email) {
-      return wait(CONFIG.latencyMs).then(function () {
-        var user = users().filter(function (u) { return norm(u.email) === norm(email); })[0];
-        if (!user) return fail('nomatch', 'Email này chưa được đăng ký tài khoản nào.', 'email');
-        var code = randomOtp();
-        set(K.otp, { email: norm(user.email), code: code, exp: Date.now() + CONFIG.otpTtlMs, tries: 0 });
-        // Có backend: máy chủ gửi email thật và KHÔNG trả code về cho trình duyệt.
-        return { ok: true, email: user.email, demoCode: CONFIG.demoShowOtp ? code : null };
-      });
+      return rawFetch('POST', '/auth/forgot-password', { email: String(email || '').trim() }).then(function (r) {
+        return ok2xx(r) ? { ok: true, email: String(email).trim() } : toFail(r, F_OTP);
+      }).catch(netFail);
     },
 
-    // POST /auth/forgot/verify-otp
+    // POST /auth/verify-reset-otp (chỉ kiểm tra mã, chưa đổi mật khẩu)
     verifyOtp: function (email, code) {
-      return wait(CONFIG.latencyMs / 2).then(function () { return checkOtp(email, code); });
+      return rawFetch('POST', '/auth/verify-reset-otp', { email: String(email || '').trim(), otp: String(code || '').trim() }).then(function (r) {
+        return ok2xx(r) ? { ok: true } : toFail(r, F_OTP);
+      }).catch(netFail);
     },
 
-    // POST /auth/forgot/reset
+    // POST /auth/reset-password
     resetPassword: function (email, code, newPassword) {
-      return wait(CONFIG.latencyMs).then(function () {
-        var chk = checkOtp(email, code);
-        if (!chk.ok) return chk;
-        var list = users();
-        var user = list.filter(function (u) { return norm(u.email) === norm(email); })[0];
-        if (!user) return fail('nomatch', 'Không tìm thấy tài khoản.');
-        user.password = hash(newPassword);
-        saveUsers(list);
-        del(K.otp);
-        return { ok: true };
-      });
+      return rawFetch('POST', '/auth/reset-password', { email: String(email || '').trim(), otp: String(code || '').trim(), newPassword: newPassword }).then(function (r) {
+        return ok2xx(r) ? { ok: true } : toFail(r, F_RESET);
+      }).catch(netFail);
     },
 
-    // PUT /me
+    // GET /auth/me : lấy lại hồ sơ mới nhất từ máy chủ
+    me: function () {
+      return authRequest('GET', '/auth/me').then(function (r) {
+        if (!ok2xx(r)) return toFail(r);
+        var user = mapUser(r.body.result);
+        cacheUser(user);
+        return { ok: true, user: user };
+      }).catch(netFail);
+    },
+
+    // PATCH /auth/me : sửa họ tên, SĐT, giới tính, lớp, khoa. Ảnh đại diện chỉ lưu trên trình duyệt này.
     updateProfile: function (id, patch) {
-      return wait(CONFIG.latencyMs / 2).then(function () {
-        var list = users();
-        var user = list.filter(function (u) { return u.id === id; })[0];
-        if (!user) return fail('nouser', 'Phiên đăng nhập không còn hợp lệ.');
-        if (patch.email && list.some(function (u) { return u.id !== id && norm(u.email) === norm(patch.email); })) return fail('dup', 'Email này đã được tài khoản khác sử dụng.', 'email');
-        if (patch.studentid && list.some(function (u) { return u.id !== id && u.studentid && u.studentid === patch.studentid; })) return fail('dup', 'Mã sinh viên này đã có tài khoản khác.', 'studentid');
-        Object.keys(patch).forEach(function (k) { if (k !== 'id' && k !== 'role' && k !== 'password') user[k] = patch[k]; });
-        if (!saveUsers(list)) return fail('storage', 'Không lưu được (bộ nhớ trình duyệt đầy). Thử ảnh nhỏ hơn.');
-        return { ok: true, user: publicUser(user) };
-      });
+      var keys = Object.keys(patch || {});
+      var cur = users().filter(function (u) { return u.id === id; })[0];
+      if (!cur) return Promise.resolve(fail('session', 'Phiên đăng nhập không còn hợp lệ.'));
+
+      if (keys.length === 1 && keys[0] === 'avatar') {
+        try {
+          if (patch.avatar) localStorage.setItem(K.avatarPrefix + id, patch.avatar);
+          else localStorage.removeItem(K.avatarPrefix + id);
+        } catch (e) { return Promise.resolve(fail('storage', 'Không lưu được ảnh (bộ nhớ trình duyệt đầy). Thử ảnh nhỏ hơn.')); }
+        cur.avatar = patch.avatar || null;
+        cacheUser(cur);
+        return Promise.resolve({ ok: true, user: cur });
+      }
+      var body = {
+        fullName: String(patch.fullname != null ? patch.fullname : cur.fullname).trim(),
+        phone: patch.phone != null ? patch.phone : cur.phone,
+        gender: patch.gender || cur.gender
+      };
+      if (cur.role === 'student') {
+        body.className = patch.cls != null ? patch.cls : cur.cls;
+        body.facultyName = patch.faculty != null ? patch.faculty : cur.faculty;
+      }
+      return authRequest('PATCH', '/auth/me', body).then(function (r) {
+        if (!ok2xx(r)) return toFail(r, F_PROFILE, F_DUP);
+        var user = mapUser(r.body.result);
+        cacheUser(user);
+        return { ok: true, user: user };
+      }).catch(netFail);
     },
 
-    // PUT /me/password
+    // PATCH /auth/me/password : backend thu hồi mọi phiên cũ và trả cặp token mới cho thiết bị này
     changePassword: function (id, oldPw, newPw) {
-      return wait(CONFIG.latencyMs).then(function () {
-        var list = users();
-        var user = list.filter(function (u) { return u.id === id; })[0];
-        if (!user) return fail('nouser', 'Phiên đăng nhập không còn hợp lệ.');
-        if (user.password !== hash(oldPw)) return fail('badpw', 'Mật khẩu cũ không đúng.', 'old');
-        user.password = hash(newPw);
-        saveUsers(list);
+      return authRequest('PATCH', '/auth/me/password', { currentPassword: oldPw, newPassword: newPw }).then(function (r) {
+        if (!ok2xx(r)) return toFail(r, F_PASSWORD);
+        if (r.body && r.body.result && r.body.result.accessToken) saveTokens(r.body.result);
         return { ok: true };
-      });
+      }).catch(netFail);
     }
   };
 
-  function failLogin(lock, msg, field) {
-    lock.count = (lock.count || 0) + 1;
-    if (lock.count >= CONFIG.maxLoginFails) {
-      lock = { count: 0, until: Date.now() + CONFIG.lockMs };
-      set(K.lock, lock);
-      return fail('locked', 'Bạn nhập sai quá ' + CONFIG.maxLoginFails + ' lần. Tài khoản tạm khóa ' + Math.round(CONFIG.lockMs / 1000) + ' giây.');
-    }
-    set(K.lock, lock);
-    var left = CONFIG.maxLoginFails - lock.count;
-    return fail('bad', msg + (left <= 2 ? ' Còn ' + left + ' lần thử.' : ''), field);
-  }
-
-  function randomOtp() {
-    var buf = new Uint32Array(1);
-    (window.crypto || window.msCrypto).getRandomValues(buf);
-    return String(100000 + (buf[0] % 900000));
-  }
-  // Kiểm tra bản ghi OTP (dùng chung cho đăng ký và quên mật khẩu)
-  function checkOtpRecord(o, email, code, drop, save) {
-    if (!o || norm(o.email) !== norm(email)) return fail('noOtp', 'Chưa có mã OTP. Hãy bấm "Gửi OTP" trước.', 'otp');
-    if (Date.now() > o.exp) { drop(); return fail('expired', 'Mã OTP đã hết hạn. Hãy gửi lại mã mới.', 'otp'); }
-    if (o.tries >= CONFIG.otpMaxTries) { drop(); return fail('tooMany', 'Bạn nhập sai quá nhiều lần. Hãy gửi lại mã mới.', 'otp'); }
-    if (o.code !== String(code).trim()) {
-      o.tries++; save(o);
-      return fail('bad', 'Mã OTP không đúng. Còn ' + (CONFIG.otpMaxTries - o.tries) + ' lần thử.', 'otp');
-    }
-    return { ok: true };
-  }
-  function checkOtp(email, code) {
-    return checkOtpRecord(get(K.otp), email, code, function () { del(K.otp); }, function (x) { set(K.otp, x); });
-  }
-
   /* ---------- 3. PHIÊN ĐĂNG NHẬP & VAI TRÒ ---------- */
-  function startSession(user, remember) {
-    del(K.session); del(K.session, sessionStorage);
-    set(K.session, { id: user.id }, remember ? localStorage : sessionStorage);
+  // Lưu hồ sơ + token. "Ghi nhớ tôi" -> localStorage (giữ sau khi đóng trình duyệt), ngược lại sessionStorage.
+  function startSession(user, remember, tokens) {
+    endSession();
+    var st = remember ? localStorage : sessionStorage;
+    set(K.session, { id: user.id }, st);
+    if (tokens) set(K.tokens, { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, exp: Date.now() + (tokens.expiresIn || 0) * 1000 }, st);
+    cacheUser(user);
     // Đồng bộ với cổng sinh viên (student.js) để vào khu sinh viên không bị hỏi đăng nhập lại
     try { if (user.role === 'student') localStorage.setItem(K.studentFlag, '1'); else localStorage.removeItem(K.studentFlag); } catch (e) { /* bỏ qua */ }
   }
   function endSession() {
     del(K.session); del(K.session, sessionStorage);
+    del(K.tokens); del(K.tokens, sessionStorage);
+    del(K.users);
     try { localStorage.removeItem(K.studentFlag); } catch (e) { /* bỏ qua */ }
   }
   function flagOn() { try { return localStorage.getItem(K.studentFlag) === '1'; } catch (e) { return false; } }
 
   function currentUser() {
-    var list = users();
     var s = get(K.session, sessionStorage) || get(K.session);
-    var user = s ? list.filter(function (u) { return u.id === s.id; })[0] : null;
-    if (user && user.role === 'student' && !flagOn()) {   // sinh viên đã đăng xuất ở cổng sinh viên
+    if (!s) {
+      // Cổng sinh viên (student.js) đăng xuất bằng cách xóa phiên nhưng không biết về token: dọn token còn sót và thu hồi ở máy chủ.
+      var left = get(K.tokens) || get(K.tokens, sessionStorage);
+      if (left && left.refreshToken) revokeOnServer(left.refreshToken);
+      del(K.tokens); del(K.tokens, sessionStorage); del(K.users);
+      if (flagOn()) { try { localStorage.removeItem(K.studentFlag); } catch (e) { /* bỏ qua */ } }
+      return null;
+    }
+    var user = users().filter(function (u) { return u.id === s.id; })[0] || null;
+    if (!user || !getTokens()) { endSession(); return null; }
+    if (user.role === 'student' && !flagOn()) {   // sinh viên đã đăng xuất ở cổng sinh viên
       endSession();
       return null;
     }
-    if (!user && flagOn()) {                              // sinh viên đăng nhập bằng form demo của cổng sinh viên
-      user = list.filter(function (u) { return u.id === 'u-sv'; })[0] || null;
-      if (user) set(K.session, { id: user.id });
-    }
-    return user ? publicUser(user) : null;
+    return Object.assign({}, user);
   }
   function roleHome(user) { return ROLE_HOME[user && user.role] || 'home.html'; }   // khách / vai trò lạ về trang chủ
   function roleLabel(role) { return ROLE_LABEL[role] || 'Người dùng'; }
@@ -288,7 +328,18 @@
   }
   function loginUrl() { saveNext(); return 'login.html'; }
 
+  // Thu hồi refresh token ở máy chủ (keepalive để vẫn gửi được khi chuyển trang)
+  function revokeOnServer(refreshToken) {
+    try {
+      fetch(CONFIG.apiBase + '/auth/logout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: refreshToken }), keepalive: true
+      }).catch(function () { /* bỏ qua */ });
+    } catch (e) { /* bỏ qua */ }
+  }
   function logout() {
+    var t = getTokens();
+    if (t && t.refreshToken) revokeOnServer(t.refreshToken);
     endSession();
     flash('success', 'Bạn đã đăng xuất.');
     location.href = 'home.html';
@@ -490,6 +541,16 @@
       return;
     }
 
+    // Kiểm tra phiên với máy chủ (tài khoản bị khóa/xóa, refresh token hết hạn...). Không chặn việc hiển thị trang.
+    if (user) {
+      api.me().then(function (res) {
+        if (!res.ok && res.code === 'session') {
+          flash('info', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          location.reload();
+        }
+      });
+    }
+
     var slot = document.getElementById('siteHeaderSlot');
     if (slot) { slot.outerHTML = siteHeaderHTML(user, document.body.getAttribute('data-nav') || ''); setupMenus(); }
     showFlash();
@@ -518,7 +579,7 @@
   window.SEMSAuth = {
     config: CONFIG, api: api, currentUser: currentUser, roleHome: roleHome, roleLabel: roleLabel,
     takeNext: takeNext, logout: logout, toast: toast, flash: flash, setLoading: setLoading,
-    requireLogin: requireLogin, startSession: startSession, wait: wait,
+    requireLogin: requireLogin, wait: wait,
     validatePassword: validatePassword, pwMeter: pwMeter, focusFirstError: focusFirstError
   };
 

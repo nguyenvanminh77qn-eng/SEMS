@@ -26,7 +26,10 @@
       var i = $(b.dataset.target), hidden = i.type === 'password';
       i.type = hidden ? 'text' : 'password';
       b.setAttribute('aria-label', hidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+      b.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+      b.classList.toggle('is-on', hidden);
     });
+    b.addEventListener('mousedown', function (e) { e.preventDefault(); });
   });
 
   function countdown(btn) {
@@ -68,10 +71,10 @@
         A.toast('error', 'Gửi OTP thất bại. ' + res.message);
         return;
       }
-      hint.textContent = 'Đã gửi mã OTP tới ' + res.email + '. Mã có hiệu lực 5 phút.';
+      hint.textContent = 'Nếu email đã đăng ký, mã OTP đã được gửi tới ' + res.email + '. Mã có hiệu lực 5 phút.';
       hint.classList.add('ok');
       showMailbox(res.email, res.demoCode);
-      A.toast('success', 'Đã gửi mã OTP tới ' + res.email + '.');
+      A.toast('success', 'Nếu email đã đăng ký, mã OTP đã được gửi tới ' + res.email + '.');
       if (res.demoCode) A.toast('info', 'Chế độ demo: chưa có máy chủ gửi email, mã OTP hiển thị trong khung "Hộp thư demo".', 7000);
       countdown(btn);
       $('otp').focus();
@@ -130,6 +133,8 @@
       A.setLoading(btn, false);
       if (!res.ok) {
         A.toast('error', 'Đặt lại mật khẩu thất bại. ' + res.message);
+        if (res.field === 'password') { err('password', res.message); return; }   // mật khẩu chưa hợp lệ: sửa tại chỗ
+        if (res.code === 'network') return;                                      // mất kết nối: giữ nguyên để thử lại
         ctx = null; show('step1');   // mã hết hạn / không hợp lệ -> làm lại từ đầu
         return;
       }
