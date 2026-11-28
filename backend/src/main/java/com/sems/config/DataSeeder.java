@@ -8,15 +8,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sems.auth.entity.Role;
-import com.sems.auth.entity.RoleName;
-import com.sems.auth.entity.User;
-import com.sems.auth.entity.UserRole;
-import com.sems.auth.entity.UserStatus;
-import com.sems.auth.repository.RoleRepository;
-import com.sems.auth.repository.UserRepository;
-import com.sems.auth.repository.UserRoleRepository;
-import com.sems.auth.service.StudentProfileWriter;
+import com.sems.entity.Role;
+import com.sems.entity.RoleName;
+import com.sems.entity.User;
+import com.sems.entity.UserRole;
+import com.sems.entity.UserStatus;
+import com.sems.repository.authRepository.RoleRepository;
+import com.sems.repository.authRepository.UserRepository;
+import com.sems.repository.authRepository.UserRoleRepository;
+import com.sems.service.authService.StudentProfileWriter;
 
 /**
  * Tạo sẵn 3 tài khoản mẫu để test trên database local (cùng tài khoản demo với frontend).
