@@ -9,7 +9,11 @@
     var i = $('password'), h = i.type === 'password';
     i.type = h ? 'text' : 'password';
     eye.setAttribute('aria-label', h ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    eye.setAttribute('aria-pressed', h ? 'true' : 'false');
+    eye.classList.toggle('is-on', h);
   });
+  // Giữ con trỏ trong ô mật khẩu khi bấm con mắt
+  eye.addEventListener('mousedown', function (e) { e.preventDefault(); });
 
   // Cảnh báo khi Caps Lock đang bật lúc gõ mật khẩu
   function caps(e) { if (e.getModifierState) $('caps').hidden = !e.getModifierState('CapsLock'); }
@@ -38,7 +42,13 @@
       if (!res.ok) {
         busy = false;
         A.setLoading(btn, false);
-        if (res.field) { err(res.field, res.message); $(res.field).focus(); }
+        if (res.code === 'EMAIL_NOT_VERIFIED') {   // đã đăng ký nhưng chưa nhập OTP: chuyển sang bước xác thực email
+          try { sessionStorage.setItem('sems_verify_email', JSON.stringify($('email').value.trim())); } catch (e) { /* bỏ qua */ }
+          A.toast('info', 'Email chưa được xác thực. Đang chuyển sang bước nhập mã OTP...', 3500);
+          setTimeout(function () { location.href = 'register.html?verify=1'; }, 1200);
+          return;
+        }
+        if (res.field && $('e-' + res.field)) { err(res.field, res.message); $(res.field).focus(); }
         A.toast('error', 'Đăng nhập thất bại. ' + res.message);
         return;
       }

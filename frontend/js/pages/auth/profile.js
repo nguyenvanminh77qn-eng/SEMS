@@ -5,7 +5,7 @@
   if (!me) return;
   var busy = false;
 
-  function err(id, msg) { $('e-' + id).textContent = msg || ''; $(id).classList.toggle('bad', !!msg); $(id).setAttribute('aria-invalid', msg ? 'true' : 'false'); return !msg; }
+  function err(id, msg) { var e = $('e-' + id); if (e) e.textContent = msg || ''; $(id).classList.toggle('bad', !!msg); $(id).setAttribute('aria-invalid', msg ? 'true' : 'false'); return !msg; }
   function clearErrors(form) {
     form.querySelectorAll('.err').forEach(function (p) { p.textContent = ''; });
     form.querySelectorAll('input.bad').forEach(function (i) { i.classList.remove('bad'); });
@@ -19,6 +19,9 @@
     $('faculty').value = me.faculty || '';
     $('phone').value = me.phone || '';
     $('email').value = me.email || '';
+    // Email và mã sinh viên là định danh tài khoản nên không sửa ở đây
+    $('email').readOnly = true; $('studentid').readOnly = true;
+    $('email').title = 'Email đăng nhập, không đổi được'; $('studentid').title = 'Mã sinh viên không đổi được';
     var g = document.querySelector('input[name="gender"][value="' + (me.gender || 'Nam') + '"]');
     if (g) g.checked = true;
   }
@@ -61,7 +64,10 @@
       var i = $(b.dataset.target), hidden = i.type === 'password';
       i.type = hidden ? 'text' : 'password';
       b.setAttribute('aria-label', hidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+      b.setAttribute('aria-pressed', hidden ? 'true' : 'false');
+      b.classList.toggle('is-on', hidden);
     });
+    b.addEventListener('mousedown', function (e) { e.preventDefault(); });
   });
 
   // ----- Ảnh đại diện -----

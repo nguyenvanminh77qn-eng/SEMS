@@ -24,7 +24,6 @@ USE sems_db;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(30) NOT NULL,
     email VARCHAR(150) NOT NULL,
     phone VARCHAR(15) NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -38,7 +37,6 @@ CREATE TABLE IF NOT EXISTS users (
     last_login_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT uq_users_username UNIQUE (username),
     CONSTRAINT uq_users_email UNIQUE (email),
     CONSTRAINT uq_users_phone UNIQUE (phone)
 ) ENGINE=InnoDB;
@@ -189,7 +187,7 @@ CREATE TABLE IF NOT EXISTS event_registrations (
     CONSTRAINT uq_event_registrations_active_student_event UNIQUE (event_id, active_student_id),
     CONSTRAINT fk_event_registrations_student
         FOREIGN KEY (student_id) REFERENCES students(id)
-        ON DELETE RESTRICT ON UPDATE CASCADE,
+        ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT fk_event_registrations_event
         FOREIGN KEY (event_id) REFERENCES events(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
